@@ -1,10 +1,10 @@
 const path = require('path');
-export default function storefrontModule() {
-  const config = require(this.options.rootDir + '/storefront.config').default;
+export default function vuefrontModule() {
+  const config = require(this.options.rootDir + '/vuefront.config').default;
   this.addPlugin({
     src: path.resolve(__dirname, './plugin.js'),
     options: {
-      storefrontConfig: config,
+      vuefrontConfig: config,
       debug: this.options.dev
     }
   })
