@@ -5,6 +5,7 @@
   "license": "MIT",
   "typings": "types/index.d.ts",
   "dependencies": {
-    "@types/node": "^11.11.3"
+    "@types/node": "^11.11.3",
+    "lodash": "^4.17.11"
   }
 }
