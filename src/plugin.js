@@ -1,4 +1,7 @@
 import Vue from 'vue'
+<%for (var key in options.vuefrontConfig.plugins) {%>
+  require('<%= options.vuefrontConfig.plugins[key] %>')
+<%}%>
 export default (ctx, inject) => {
   <%for (var key in options.vuefrontConfig.components) {%>
     Vue.component('vf<%= key %>', require('<%= options.vuefrontConfig.components[key] %>').default)
