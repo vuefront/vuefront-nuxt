@@ -1,9 +1,17 @@
 {
   "name": "vuefront-nuxt",
-  "version": "1.0.0",
+  "version": "0.1.1",
+  "description": "vuefront-nuxt",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vuefront/vuefront-nuxt.git"
+  },
   "main": "./src/index.js",
   "license": "MIT",
   "typings": "types/index.d.ts",
+  "peerDependencies": {
+    "vuefront": "^0.1.0"
+},
   "dependencies": {
     "@types/node": "^11.11.3",
     "lodash": "^4.17.11"
