@@ -11,6 +11,8 @@
     "typings": "types/index.d.ts",
     "peerDependencies": {},
     "dependencies": {
-        "@types/node": "^11.11.3"
+        "@types/node": "^11.11.3",
+        "lodash": "^4.17.11",
+        "vue": "^2.6.10"
     }
 }
