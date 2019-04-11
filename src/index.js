@@ -1,6 +1,6 @@
 const path = require('path')
 let themeOptions = require('vuefront').default
-import _ from 'lodash'
+const _ = require('lodash')
 
 const mergeConfig = (objValue, srcValue) => {
     if (_.isArray(objValue)) {
