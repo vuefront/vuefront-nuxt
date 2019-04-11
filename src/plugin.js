@@ -6,21 +6,27 @@ import Vue from 'vue'
     require('<%= options.vuefrontConfig.css[key] %>')
 <%}%>
 export default (ctx, inject) => {
+  const components = {
+      element: {},
+      template: {},
+      position: {},
+      module: {}
+  }
   <%for (var key in options.vuefrontConfig.components) {%>
-    Vue.component('vf<%= key %>', require('<%= options.vuefrontConfig.components[key] %>').default)
+    components['vf<%= key %>'] = Vue.component('vf<%= key %>', require('<%= options.vuefrontConfig.components[key] %>').default)
   <%}%>
 
   <%for (var key in options.vuefrontConfig.templates) {%>
-    Vue.component('vfTemplate<%= key %>', require('<%= options.vuefrontConfig.templates[key] %>').default)
+    components['vfTemplate<%= key %>'] = Vue.component('vfTemplate<%= key %>', require('<%= options.vuefrontConfig.templates[key] %>').default)
   <%}%>
 
   <%for (var key in options.vuefrontConfig.positions) {%>
-    Vue.component('vfPosition<%= key %>', require('<%= options.vuefrontConfig.positions[key] %>').default)
+    components['vfPosition<%= key %>'] = Vue.component('vfPosition<%= key %>', require('<%= options.vuefrontConfig.positions[key] %>').default)
   <%}%>
 
   <%for (var key in options.vuefrontConfig.modules) {%>
-    Vue.component('vfModule<%= key %>', require('<%= options.vuefrontConfig.modules[key] %>').default)
+    components['vfModule<%= key %>'] = Vue.component('vfModule<%= key %>', require('<%= options.vuefrontConfig.modules[key] %>').default)
   <%}%>
 
-  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig.layouts) %>})
+  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig.layouts) %>, components})
 }
