@@ -1,4 +1,26 @@
 import Vue from 'vue'
+import ApolloClient from 'apollo-boost';
+import _ from 'lodash'
+import 'isomorphic-fetch'
+
+export const init = (ctx, inject) => {
+  const baseURL = process.browser
+      ? '<%= options.browserBaseURL %>'
+      : '<%= options.baseURL %>'
+
+  const client = new ApolloClient({
+      uri: baseURL,
+      request: (operation) => {
+        operation.setContext({
+          headers: {
+            'Cookie': _.map(ctx.app.$cookies.getAll(), (value, index) => (index + '=' + value)).join(';')
+          }
+        });
+      }
+    });
+    
+  inject('vfapollo', client)
+}
 
 <%for (var key in options.vuefrontConfig.plugins) {%>
   require('<%= options.vuefrontConfig.plugins[key] %>')
@@ -8,6 +30,7 @@ import Vue from 'vue'
 <%}%>
 
 export default async (ctx, inject) => {
+    init(ctx, inject)
   const components = {
       element: {},
       template: {},
@@ -23,11 +46,8 @@ export default async (ctx, inject) => {
     <% } %>
 
   <%}%>
-  
   if(process.server) {
     await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
-  } else {
-    await ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
   }
   <%for (var key in options.vuefrontConfig.components) {%>
     components['vf<%= key %>'] = Vue.component('vf<%= key %>', require('<%= options.vuefrontConfig.components[key] %>').default)
@@ -46,4 +66,6 @@ export default async (ctx, inject) => {
   <%}%>
 
   inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig.layouts) %>, components})
+
+
 }
