@@ -11,7 +11,7 @@
     "typings": "types/index.d.ts",
     "peerDependencies": {},
     "dependencies": {
-        "@types/node": "^11.11.3",
+        "@types/node": "^11.13.6",
         "cookie-universal": "^2.0.14",
         "graphql": "^14.2.1",
         "isomorphic-fetch": "^2.2.1",
