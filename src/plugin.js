@@ -1,7 +1,10 @@
 import Vue from 'vue'
+import VueI18n from 'vue-i18n'
 import ApolloClient from 'apollo-boost';
 import _ from 'lodash'
 import 'isomorphic-fetch'
+
+Vue.use(VueI18n)
 
 export const init = (ctx, inject) => {
   const baseURL = process.browser
@@ -28,6 +31,21 @@ export const init = (ctx, inject) => {
 <%for (var key in options.vuefrontConfig.css) {%>
     require('<%= options.vuefrontConfig.css[key] %>')
 <%}%>
+
+function loadLocaleMessages() {
+  const locales = require.context(`~/locales`, true, /\.json$/)
+  const messages = {}
+  locales.keys().forEach(key => {
+    const local = /^.\/([a-zA-Z-]+)\//.exec(key)[1]
+    if(_.isUndefined(messages[local])) {
+      messages[local] = {}
+    }
+    let path = /^.\/[a-zA-Z-]+\/(.*).json/.exec(key)[1]
+    path = '['+path.split('/').join('][')+']'
+    _.set(messages, local+path, locales(key))
+  })
+  return messages
+}
 
 export default async (ctx, inject) => {
     init(ctx, inject)
@@ -62,6 +80,11 @@ export default async (ctx, inject) => {
   <%}%>
 
   inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig.layouts) %>, components})
+
+  ctx.app.i18n = new VueI18n({
+    locale: ctx.store.getters['common/language/locale'],
+    messages: loadLocaleMessages()
+  })
 
 
 }
