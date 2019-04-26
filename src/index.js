@@ -13,6 +13,7 @@ const mergeConfig = (objValue, srcValue) => {
 }
 
 export default function vuefrontModule(_moduleOptions) {
+  const isNuxtVersion2 = this.options.build.transpile
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
   const defaultPort =
     process.env.API_PORT ||
@@ -72,6 +73,19 @@ export default function vuefrontModule(_moduleOptions) {
         path: url,
         component: resolve('', 'node_modules/' + pageComponent)
       })
+    }
+  })
+
+  this.extendBuild((config, { isServer }) => {
+    const vuefrontRe = 'vuefront/lib'
+    if (isNuxtVersion2) {
+      this.options.build.transpile.push(vuefrontRe)
+    } else {
+      config.externals = [
+        nodeExternals({
+          whitelist: [vuefrontRe]
+        })
+      ]
     }
   })
 }
