@@ -15,6 +15,11 @@ export const init = (ctx, inject) => {
       uri: baseURL,
       request: (operation) => {
         operation.setContext({
+          fetchOptions: {
+            credentials: 'include'
+          }
+        });
+        operation.setContext({
           headers: {
             'Cookie': _.map(ctx.app.$cookies.getAll(), (value, index) => (index + '=' + value)).join(';')
           }
@@ -66,6 +71,8 @@ export default async (ctx, inject) => {
   <%}%>
   if(process.server) {
     await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
+  } else {
+    await ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
   }
   <%for (var key in options.vuefrontConfig.components) {%>
     components['vf<%= key %>'] = Vue.component('vf<%= key %>', require('<%= options.vuefrontConfig.components[key] %>').default)
