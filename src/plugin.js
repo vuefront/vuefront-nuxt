@@ -69,11 +69,7 @@ export default async (ctx, inject) => {
     <% } %>
 
   <%}%>
-  if(process.server) {
-    await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
-  } else {
-    await ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
-  }
+
   <%for (var key in options.vuefrontConfig.components) {%>
     components['vf<%= key %>'] = Vue.component('vf<%= key %>', require('<%= options.vuefrontConfig.components[key] %>').default)
   <%}%>
@@ -86,12 +82,16 @@ export default async (ctx, inject) => {
     components['vfModule<%= key %>'] = Vue.component('vfModule<%= key %>', require('<%= options.vuefrontConfig.modules[key] %>').default)
   <%}%>
 
-  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig.layouts) %>, components})
+  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig) %>, components})
 
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
     messages: loadLocaleMessages()
   })
 
-
+  if(process.server) {
+    await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
+  } else {
+    await ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
+  }
 }
