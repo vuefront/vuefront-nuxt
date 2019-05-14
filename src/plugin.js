@@ -37,9 +37,19 @@ export const init = (ctx, inject) => {
     require('<%= options.vuefrontConfig.css[key] %>')
 <%}%>
 
-function loadLocaleMessages() {
+function loadLocaleMessages(options) {
   const locales = require.context(`~/locales`, true, /\.json$/)
   const messages = {}
+ 
+  <% for (var key in options.vuefrontConfig.locales) { %>
+  if(_.isUndefined(messages['<%=key%>'])) {
+    messages['<%=key%>'] = {}
+  }
+  <% for (var key2 in options.vuefrontConfig.locales[key]) { %>
+  messages['<%=key%>'] = _.merge({}, messages['<%=key%>'], require('<%=options.vuefrontConfig.locales[key][key2]%>'))
+  <%}%>
+  <% } %>
+
   locales.keys().forEach(key => {
     const local = /^.\/([a-zA-Z-]+)\//.exec(key)[1]
     if(_.isUndefined(messages[local])) {
@@ -47,8 +57,11 @@ function loadLocaleMessages() {
     }
     let path = /^.\/[a-zA-Z-]+\/(.*).json/.exec(key)[1]
     path = '['+path.split('/').join('][')+']'
-    _.set(messages, local+path, locales(key))
+    const value = _.set({messages}, path, locales(key))
+
+    messages[local] = _.merge({}, messages[local], value)
   })
+
   return messages
 }
 
@@ -86,7 +99,7 @@ export default async (ctx, inject) => {
 
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
-    messages: loadLocaleMessages()
+    messages: loadLocaleMessages(<%= JSON.stringify(options.vuefrontConfig)%>)
   })
 
   if(process.server) {
