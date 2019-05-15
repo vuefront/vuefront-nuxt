@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import ApolloClient from 'apollo-boost';
+import ApolloClient from "apollo-boost";
 import _ from 'lodash'
 import 'isomorphic-fetch'
 
@@ -95,7 +95,11 @@ export default async (ctx, inject) => {
     components['vfModule<%= key %>'] = Vue.component('vfModule<%= key %>', require('<%= options.vuefrontConfig.modules[key] %>').default)
   <%}%>
 
-  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig) %>, components})
+  const baseURL = process.browser
+    ? '<%= options.browserBaseURL %>'
+    : '<%= options.baseURL %>'
+
+  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig) %>, components, baseURL})
 
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
