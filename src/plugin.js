@@ -99,7 +99,15 @@ export default async (ctx, inject) => {
     ? '<%= options.browserBaseURL %>'
     : '<%= options.baseURL %>'
 
-  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig) %>, components, baseURL})
+  inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig) %>, components, baseURL, get params() {
+    let result = ctx.route.params
+
+    if(!_.isEmpty(ctx.route.matched)) {
+      result = {...result, ...ctx.route.matched[0].props.default}
+    }
+
+    return result
+  }})
 
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],

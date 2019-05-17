@@ -1,6 +1,8 @@
 const path = require('path')
 let themeOptions = require('vuefront').default
 const _ = require('lodash')
+const ApolloClient = require('apollo-boost').default
+require('isomorphic-fetch')
 
 const mergeConfig = (objValue, srcValue) => {
   if (_.isArray(objValue)) {
@@ -12,7 +14,7 @@ const mergeConfig = (objValue, srcValue) => {
   }
 }
 
-export default function vuefrontModule(_moduleOptions) {
+export default async function vuefrontModule(_moduleOptions) {
   const isNuxtVersion2 = this.options.build.transpile
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
   const defaultPort =
@@ -33,7 +35,8 @@ export default function vuefrontModule(_moduleOptions) {
     defaultHost = 'localhost'
   }
 
-  const prefix = process.env.API_PREFIX || moduleOptions.prefix || moduleOptions.targetUrl
+  const prefix =
+    process.env.API_PREFIX || moduleOptions.prefix || moduleOptions.targetUrl
   let browserBaseURL = null
   let baseURL = `http://${defaultHost}:${defaultPort}${prefix}`
 
@@ -65,16 +68,40 @@ export default function vuefrontModule(_moduleOptions) {
     }
   })
 
-  this.extendRoutes((routes, resolve) => {
-    for (const url in themeOptions.pages) {
-      const pageComponent = themeOptions.pages[url]
-      routes.push({
-        name: url.replace('/', '_').replace(':', '_'),
-        path: url,
-        component: resolve('', 'node_modules/' + pageComponent)
+  const client = new ApolloClient({
+    uri: baseURL
+  })
+
+  for (const url in themeOptions.pages) {
+    const pageComponent = themeOptions.pages[url]
+    if (_.isObject(pageComponent)) {
+      const seoResolver = require(pageComponent.seo).default
+      const result = await seoResolver({ client })
+      this.extendRoutes((routes, resolve) => {
+        routes.push({
+          name: url.replace('/', '_').replace(':', '_'),
+          path: url,
+          component: resolve('', 'node_modules/' + pageComponent.component)
+        })
+        for (const urlKey in result) {
+          routes.push({
+            name: result[urlKey].keyword,
+            path: '/' + result[urlKey].keyword,
+            component: resolve('', 'node_modules/' + pageComponent.component),
+            props: {...result[urlKey], url},
+          })
+        }
+      })
+    } else {
+      this.extendRoutes((routes, resolve) => {
+        routes.push({
+          name: url.replace('/', '_').replace(':', '_'),
+          path: url,
+          component: resolve('', 'node_modules/' + pageComponent)
+        })
       })
     }
-  })
+  }
 
   this.extendBuild((config, { isServer }) => {
     const vuefrontRe = 'vuefront/lib'
