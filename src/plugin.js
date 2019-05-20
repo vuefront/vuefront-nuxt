@@ -67,6 +67,7 @@ function loadLocaleMessages(options) {
 
 export default async (ctx, inject) => {
     init(ctx, inject)
+
   const components = {
       element: {},
       template: {},
@@ -74,13 +75,20 @@ export default async (ctx, inject) => {
       module: {}
   }
 
+  const opts = {}
+
+  if(process.client) {
+    if(_.isUndefined(window.__NUXT__)) {
+      opts.preserveState = false
+    }
+  }
+  
   <%for (var key in options.vuefrontConfig.store) {%>
     <% if (typeof options.vuefrontConfig.store[key].module !== 'undefined') { %>
-        ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true, ...require('<%= options.vuefrontConfig.store[key].module %>')})
+        ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true, ...require('<%= options.vuefrontConfig.store[key].module %>')}, opts)
     <% } else {%>
-        ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true})
+        ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true}, opts)
     <% } %>
-
   <%}%>
 
   <%for (var key in options.vuefrontConfig.components) {%>
@@ -98,7 +106,6 @@ export default async (ctx, inject) => {
   const baseURL = process.browser
     ? '<%= options.browserBaseURL %>'
     : '<%= options.baseURL %>'
-
   inject('vuefront', {options: <%= JSON.stringify(options.vuefrontConfig) %>, components, baseURL, get params() {
     let result = ctx.route.params
 
@@ -109,14 +116,14 @@ export default async (ctx, inject) => {
     return result
   }})
 
+  if(process.server) {
+    await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
+  } else if(process.browser) {
+      ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
+  }
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
     messages: loadLocaleMessages(<%= JSON.stringify(options.vuefrontConfig)%>)
   })
 
-  if(process.server) {
-    await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
-  } else {
-    await ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
-  }
 }

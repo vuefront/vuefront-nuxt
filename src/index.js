@@ -72,27 +72,43 @@ export default async function vuefrontModule(_moduleOptions) {
     uri: baseURL
   })
 
+  let whiteList= []
+
   for (const url in themeOptions.pages) {
     const pageComponent = themeOptions.pages[url]
     if (_.isObject(pageComponent)) {
-      const seoResolver = require(pageComponent.seo).default
-      const result = await seoResolver({ client })
+      if(!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
+        whiteList = [...whiteList, url]
+      }
+      let result = []
+      if(!_.isUndefined(pageComponent.seo)) {
+        const seoResolver = require(pageComponent.seo).default
+        result = await seoResolver({client})
+      }
       this.extendRoutes((routes, resolve) => {
         routes.push({
           name: url.replace('/', '_').replace(':', '_'),
           path: url,
           component: resolve('', 'node_modules/' + pageComponent.component)
         })
-        for (const urlKey in result) {
-          routes.push({
-            name: result[urlKey].keyword,
-            path: '/' + result[urlKey].keyword,
-            component: resolve('', 'node_modules/' + pageComponent.component),
-            props: {...result[urlKey], url},
-          })
+        if(!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
+          for (const urlKey in result) {
+            if(!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
+              whiteList = [...whiteList, '/' + result[urlKey].keyword]
+            } else if(_.isUndefined(pageComponent.generate)) {
+              whiteList = [...whiteList, '/' + result[urlKey].keyword]
+            }
+            routes.push({
+              name: result[urlKey].keyword,
+              path: '/' + result[urlKey].keyword,
+              component: resolve('', 'node_modules/' + pageComponent.component),
+              props: {...result[urlKey], url},
+            })
+          }
         }
       })
     } else {
+      whiteList = [...whiteList, url]
       this.extendRoutes((routes, resolve) => {
         routes.push({
           name: url.replace('/', '_').replace(':', '_'),
@@ -102,6 +118,11 @@ export default async function vuefrontModule(_moduleOptions) {
       })
     }
   }
+
+  this.nuxt.hook('generate:extendRoutes', async routes => {
+    const routesToGenerate = routes.filter(page => whiteList.includes(page.route));
+    routes.splice(0, routes.length, ...routesToGenerate);
+  });
 
   this.extendBuild((config, { isServer }) => {
     const vuefrontRe = 'vuefront/lib'
