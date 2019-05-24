@@ -7,11 +7,11 @@
         "url": "https://github.com/vuefront/vuefront-nuxt.git"
     },
     "files": [
-      "src",
-      "types"
+        "src",
+        "types"
     ],
     "keywords": [
-      "vuefront"
+        "vuefront"
     ],
     "main": "./src/index.js",
     "license": "MIT",
@@ -23,8 +23,9 @@
         "graphql": "^14.3.0",
         "isomorphic-fetch": "^2.2.1",
         "lodash": "^4.17.11",
-        "vuefront": "^0.1.7",
         "vue": "^2.6.10",
-        "vue-i18n": "^8.11.2"
+        "vue-graphql-loader": "^0.3.2",
+        "vue-i18n": "^8.11.2",
+        "vuefront": "^0.1.7"
     }
 }
