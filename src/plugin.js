@@ -30,9 +30,6 @@ export const init = (ctx, inject) => {
   inject('vfapollo', client)
 }
 
-<%for (var key in options.vuefrontConfig.plugins) {%>
-  require('<%= options.vuefrontConfig.plugins[key] %>')
-<%}%>
 <%for (var key in options.vuefrontConfig.css) {%>
     require('<%= options.vuefrontConfig.css[key] %>')
 <%}%>
@@ -49,15 +46,15 @@ function loadLocaleMessages(options) {
   messages['<%=key%>'] = _.merge({}, messages['<%=key%>'], require('<%=options.vuefrontConfig.locales[key][key2]%>'))
   <%}%>
   <% } %>
-
   locales.keys().forEach(key => {
     const local = /^.\/([a-zA-Z-]+)\//.exec(key)[1]
     if(_.isUndefined(messages[local])) {
       messages[local] = {}
     }
+
     let path = /^.\/[a-zA-Z-]+\/(.*).json/.exec(key)[1]
-    path = '['+path.split('/').join('][')+']'
-    const value = _.set({messages}, path, locales(key))
+    
+    const value = _.set({}, path.split('/'), locales(key))
 
     messages[local] = _.merge({}, messages[local], value)
   })
@@ -65,9 +62,15 @@ function loadLocaleMessages(options) {
   return messages
 }
 
-export default async (ctx, inject) => {
-    init(ctx, inject)
+<%for (var key in options.vuefrontConfig.plugins) {%>
+import plugin<%= key %> from '<%= options.vuefrontConfig.plugins[key] %>'
+<%}%>
 
+export default async (ctx, inject) => {
+  init(ctx, inject)
+  <%for (var key in options.vuefrontConfig.plugins) {%>
+  plugin<%= key %>(ctx)
+  <%}%>
   const components = {
       element: {},
       template: {},
@@ -121,6 +124,7 @@ export default async (ctx, inject) => {
   } else if(process.browser) {
       ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
   }
+
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
     messages: loadLocaleMessages(<%= JSON.stringify(options.vuefrontConfig)%>)
