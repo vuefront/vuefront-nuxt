@@ -122,7 +122,7 @@ export default async (ctx, inject) => {
   if(process.server) {
     await ctx.store.dispatch('vuefront/nuxtServerInit', ctx)
   } else if(process.browser) {
-      ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
+    await ctx.store.dispatch('vuefront/nuxtClientInit', ctx)
   }
 
   ctx.app.i18n = new VueI18n({
