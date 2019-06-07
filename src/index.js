@@ -99,34 +99,42 @@ export default async function vuefrontModule(_moduleOptions) {
         })
         if (!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
           for (const urlKey in result) {
-            if (
-              !_.isUndefined(pageComponent.generate) &&
-              pageComponent.generate
-            ) {
-              whiteList = [
-                ...whiteList,
-                '/' + result[urlKey].keyword,
-                '/amp/' + result[urlKey].keyword
-              ]
-            } else if (_.isUndefined(pageComponent.generate)) {
-              whiteList = [
-                ...whiteList,
-                '/' + result[urlKey].keyword,
-                '/amp/' + result[urlKey].keyword
-              ]
+            if (result[urlKey].keyword !== '') {
+              if (
+                !_.isUndefined(pageComponent.generate) &&
+                pageComponent.generate
+              ) {
+                whiteList = [
+                  ...whiteList,
+                  '/' + result[urlKey].keyword,
+                  '/amp/' + result[urlKey].keyword
+                ]
+              } else if (_.isUndefined(pageComponent.generate)) {
+                whiteList = [
+                  ...whiteList,
+                  '/' + result[urlKey].keyword,
+                  '/amp/' + result[urlKey].keyword
+                ]
+              }
+              routes.push({
+                name: result[urlKey].keyword,
+                path: '/' + result[urlKey].keyword,
+                component: resolve(
+                  '',
+                  'node_modules/' + pageComponent.component
+                ),
+                props: { ...result[urlKey], url }
+              })
+              routes.push({
+                name: 'amp_' + result[urlKey].keyword,
+                path: '/amp/' + result[urlKey].keyword,
+                component: resolve(
+                  '',
+                  'node_modules/' + pageComponent.component
+                ),
+                props: { ...result[urlKey], url }
+              })
             }
-            routes.push({
-              name: result[urlKey].keyword,
-              path: '/' + result[urlKey].keyword,
-              component: resolve('', 'node_modules/' + pageComponent.component),
-              props: { ...result[urlKey], url }
-            })
-            routes.push({
-              name: 'amp_' + result[urlKey].keyword,
-              path: '/amp/' + result[urlKey].keyword,
-              component: resolve('', 'node_modules/' + pageComponent.component),
-              props: { ...result[urlKey], url }
-            })
           }
         }
       })
