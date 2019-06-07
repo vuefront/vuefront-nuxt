@@ -117,6 +117,9 @@ export default async (ctx, inject) => {
     }
 
     return result
+  },
+  get isAMP() {
+    return /^\/amp([\/].*)?$/gi.test(ctx.route.fullPath)
   }})
 
   if(process.server) {

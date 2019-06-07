@@ -3,6 +3,7 @@ let themeOptions = require('vuefront').default
 const _ = require('lodash')
 const ApolloClient = require('apollo-boost').default
 require('isomorphic-fetch')
+const ampify = require('./plugins/ampify')
 
 const mergeConfig = (objValue, srcValue) => {
   if (_.isArray(objValue)) {
@@ -72,18 +73,18 @@ export default async function vuefrontModule(_moduleOptions) {
     uri: baseURL
   })
 
-  let whiteList= []
+  let whiteList = []
 
   for (const url in themeOptions.pages) {
     const pageComponent = themeOptions.pages[url]
     if (_.isObject(pageComponent)) {
-      if(!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
-        whiteList = [...whiteList, url]
+      if (!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
+        whiteList = [...whiteList, url, '/amp' + url]
       }
       let result = []
-      if(!_.isUndefined(pageComponent.seo)) {
+      if (!_.isUndefined(pageComponent.seo)) {
         const seoResolver = require(pageComponent.seo).default
-        result = await seoResolver({client})
+        result = await seoResolver({ client })
       }
       this.extendRoutes((routes, resolve) => {
         routes.push({
@@ -91,28 +92,55 @@ export default async function vuefrontModule(_moduleOptions) {
           path: url,
           component: resolve('', 'node_modules/' + pageComponent.component)
         })
-        if(!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
+        routes.push({
+          name: 'amp_' + url.replace('/', '_').replace(':', '_'),
+          path: '/amp' + url,
+          component: resolve('', 'node_modules/' + pageComponent.component)
+        })
+        if (!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
           for (const urlKey in result) {
-            if(!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
-              whiteList = [...whiteList, '/' + result[urlKey].keyword]
-            } else if(_.isUndefined(pageComponent.generate)) {
-              whiteList = [...whiteList, '/' + result[urlKey].keyword]
+            if (
+              !_.isUndefined(pageComponent.generate) &&
+              pageComponent.generate
+            ) {
+              whiteList = [
+                ...whiteList,
+                '/' + result[urlKey].keyword,
+                '/amp/' + result[urlKey].keyword
+              ]
+            } else if (_.isUndefined(pageComponent.generate)) {
+              whiteList = [
+                ...whiteList,
+                '/' + result[urlKey].keyword,
+                '/amp/' + result[urlKey].keyword
+              ]
             }
             routes.push({
               name: result[urlKey].keyword,
               path: '/' + result[urlKey].keyword,
               component: resolve('', 'node_modules/' + pageComponent.component),
-              props: {...result[urlKey], url},
+              props: { ...result[urlKey], url }
+            })
+            routes.push({
+              name: 'amp_' + result[urlKey].keyword,
+              path: '/amp/' + result[urlKey].keyword,
+              component: resolve('', 'node_modules/' + pageComponent.component),
+              props: { ...result[urlKey], url }
             })
           }
         }
       })
     } else {
-      whiteList = [...whiteList, url]
+      whiteList = [...whiteList, url, '/amp' + url]
       this.extendRoutes((routes, resolve) => {
         routes.push({
           name: url.replace('/', '_').replace(':', '_'),
           path: url,
+          component: resolve('', 'node_modules/' + pageComponent)
+        })
+        routes.push({
+          name: 'amp_' + url.replace('/', '_').replace(':', '_'),
+          path: '/amp' + url,
           component: resolve('', 'node_modules/' + pageComponent)
         })
       })
@@ -120,9 +148,22 @@ export default async function vuefrontModule(_moduleOptions) {
   }
 
   this.nuxt.hook('generate:extendRoutes', async routes => {
-    const routesToGenerate = routes.filter(page => whiteList.includes(page.route));
-    routes.splice(0, routes.length, ...routesToGenerate);
-  });
+    const routesToGenerate = routes.filter(page =>
+      whiteList.includes(page.route)
+    )
+    routes.splice(0, routes.length, ...routesToGenerate)
+  })
+
+  this.nuxt.hook('generate:page', page => {
+    page.html = ampify(page.html, page.route)
+  })
+
+  // This hook is called before serving the html to the browser
+  this.nuxt.hook('render:route', (url, page, { req, res }) => {
+    page.html = ampify(page.html, url)
+  })
+
+  this.options.loading = 'node_modules/' + themeOptions.templates.Loading
 
   this.extendBuild((config, { isServer }) => {
     const vuefrontRe = 'vuefront/lib'
