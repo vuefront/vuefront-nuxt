@@ -69,7 +69,7 @@ import plugin<%= key %> from '<%= options.vuefrontConfig.plugins[key] %>'
 export default async (ctx, inject) => {
   init(ctx, inject)
   <%for (var key in options.vuefrontConfig.plugins) {%>
-  plugin<%= key %>(ctx)
+  await plugin<%= key %>(ctx)
   <%}%>
   const components = {
       element: {},
