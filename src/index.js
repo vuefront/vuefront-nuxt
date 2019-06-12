@@ -171,8 +171,6 @@ export default async function vuefrontModule(_moduleOptions) {
     page.html = ampify(page.html, url)
   })
 
-  this.options.loading = 'node_modules/' + themeOptions.templates.Loading
-
   this.extendBuild((config, { isServer }) => {
     const vuefrontRe = 'vuefront/lib'
     if (isNuxtVersion2) {
