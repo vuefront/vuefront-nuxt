@@ -101,6 +101,9 @@ export default async (ctx, inject) => {
   <%for (var key in options.vuefrontConfig.modules) {%>
   components['vfModule<%= key %>'] = Vue.component('vfModule<%= key %>', require('<%= options.vuefrontConfig.modules[key] %>').default)<%}%>
 
+  <%for (var key in options.vuefrontConfig.loaders) {%>
+    components['vfLoader<%= key %>'] = Vue.component('vfLoader<%= key %>', require('<%= options.vuefrontConfig.loaders[key] %>').default)<%}%>
+
   inject('vuefront', {
     options,
     components,
