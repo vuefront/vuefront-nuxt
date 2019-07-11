@@ -23,7 +23,7 @@
         "cookie-universal": "^2.0.16",
         "graphql": "^14.4.2",
         "isomorphic-fetch": "^2.2.1",
-        "lodash": "^4.17.13",
+        "lodash": "^4.17.14",
         "vue": "^2.6.10",
         "vue-graphql-loader": "^0.3.2",
         "vue-i18n": "^8.12.0",
