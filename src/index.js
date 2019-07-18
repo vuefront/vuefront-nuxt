@@ -222,7 +222,6 @@ export default async function vuefrontModule(_moduleOptions) {
     page.html = ampify(page.html, page.route)
   })
 
-  // This hook is called before serving the html to the browser
   this.nuxt.hook('render:route', (url, page, { req, res }) => {
     page.html = ampify(page.html, url)
   })
