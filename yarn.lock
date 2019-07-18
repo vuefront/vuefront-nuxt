@@ -607,10 +607,10 @@ vue-functional-data-merge@^2.0.7:
   resolved "https://registry.yarnpkg.com/vue-functional-data-merge/-/vue-functional-data-merge-2.0.7.tgz#bdee655181eacdcb1f96ce95a4cc14e75313d1da"
   integrity sha512-pvLc+H+x2prwBj/uSEIITyxjz/7ZUVVK8uYbrYMmhDvMXnzh9OvQvVEwcOSBQjsubd4Eq41/CSJaWzy4hemMNQ==
 
-vue-graphql-loader@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/vue-graphql-loader/-/vue-graphql-loader-0.3.2.tgz#4dc8afb57cb2eccc064f77f305b770ed14521eaa"
-  integrity sha512-8ICo6BGu6ihX5Lo7LoiDgPr4uOkMDTY7CGL/Asbyf4zu5eTu0LZwZO3f8Q0iFMvUeIr/MxIw2xghrFbWsc5yAA==
+vue-graphql-loader@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/vue-graphql-loader/-/vue-graphql-loader-0.3.3.tgz#81a8917c9c5acf049e5ce02ebe7edefc4023e318"
+  integrity sha512-pHJFjwlxzKIh9gBC8Uk/xFF+Mt+UJU5tXL4Md1tluUZTBAalFRtlrBNz3PPwdYZ6xFVDCWXqp/28PEL1KhWt7g==
   dependencies:
     graphql "^14.0.0-rc.1"
     graphql-tag "^2.4.2"

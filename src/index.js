@@ -71,8 +71,7 @@ export default async function vuefrontModule(_moduleOptions) {
 
   const config = require(this.options.rootDir + '/vuefront.config').default
   if (typeof config.theme !== 'undefined') {
-    const customThemeOptions = require(config.theme)
-      .default
+    const customThemeOptions = require(config.theme).default
     themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
   }
   themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
@@ -228,30 +227,48 @@ export default async function vuefrontModule(_moduleOptions) {
     page.html = ampify(page.html, url)
   })
 
-    this.extendBuild((config, { isServer }) => {
-       const { rules } = config.module
+  this.extendBuild((config, { isServer }) => {
+    const { rules } = config.module
 
-       const hasGqlLoader = rules.some(
-         rule => rule.use === 'graphql-tag/loader'
-       )
+    const hasGqlLoader = rules.some(rule => rule.use === 'graphql-tag/loader')
 
-       if (!hasGqlLoader) {
-         const gqlRules = {
-           test: /\.(graphql|gql)$/,
-           use: 'graphql-tag/loader'
-         }
+    if (!hasGqlLoader) {
+      const gqlRules = {
+        test: /\.(graphql|gql)$/,
+        use: 'graphql-tag/loader'
+      }
 
-         rules.push(gqlRules)
-       }
-      const vuefrontRe = 'vuefront/lib'
-      if (isNuxtVersion2) {
-        this.options.build.transpile.push(vuefrontRe)
-      } else {
-        config.externals = [
-          nodeExternals({
-            whitelist: [vuefrontRe]
-          })
+      rules.push(gqlRules)
+    }
+
+    const hasBlockLoader = rules.some(
+      rule => rule.resourceQuery === /blockType=graphql/
+    )
+
+    if (!hasBlockLoader) {
+      const blockRules = {
+        resourceQuery: /blockType=graphql/,
+        use: [
+          {
+            loader: require.resolve('vue-graphql-loader'),
+            options: {
+              noAnonymousOperations: true
+            }
+          }
         ]
       }
-    })
+      rules.push(blockRules)
+    }
+
+    const vuefrontRe = 'vuefront/lib'
+    if (isNuxtVersion2) {
+      this.options.build.transpile.push(vuefrontRe)
+    } else {
+      config.externals = [
+        nodeExternals({
+          whitelist: [vuefrontRe]
+        })
+      ]
+    }
+  })
 }
