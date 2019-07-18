@@ -244,16 +244,12 @@ export default async function vuefrontModule(_moduleOptions) {
     const hasBlockLoader = rules.some(
       rule => rule.resourceQuery === /blockType=graphql/
     )
-
     if (!hasBlockLoader) {
       const blockRules = {
         resourceQuery: /blockType=graphql/,
         use: [
           {
-            loader: require.resolve('vue-graphql-loader'),
-            options: {
-              noAnonymousOperations: true
-            }
+            loader: require.resolve('vue-graphql-loader')
           }
         ]
       }
