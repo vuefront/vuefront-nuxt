@@ -88,6 +88,8 @@ export default async function vuefrontModule(_moduleOptions) {
     if (_.isObject(pageComponent)) {
       if (!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
         whiteList = [...whiteList, url, '/amp' + url]
+      } else if(_.isUndefined(pageComponent.generate) && !url.includes(':')) {
+        whiteList = [...whiteList, url, '/amp' + url]
       }
       let result = []
       if (!_.isUndefined(pageComponent.seo)) {
