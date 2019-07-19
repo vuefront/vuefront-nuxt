@@ -106,6 +106,11 @@ export default async (ctx, inject) => {
   ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true, ...<%= vfresolver(options.vuefrontConfig.store[key].module) %>}, opts)<% } else {%>
   ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true}, opts)<% } }%>
 
+  <%for (var key in options.vuefrontConfig.atoms) {%>
+  components['vfA<%= key %>'] = Vue.component('vfA<%= key %>', <%= vfresolver(options.vuefrontConfig.atoms[key]) %>)<%}%>
+
+  <%for (var key in options.vuefrontConfig.molecules) {%>
+  components['vfM<%= key %>'] = Vue.component('vfM<%= key %>', <%= vfresolver(options.vuefrontConfig.molecules[key]) %>)<%}%>
 
   <%for (var key in options.vuefrontConfig.components) {%>
   components['vf<%= key %>'] = Vue.component('vf<%= key %>', <%= vfresolver(options.vuefrontConfig.components[key]) %>)<%}%>
