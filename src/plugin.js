@@ -112,11 +112,14 @@ export default async (ctx, inject) => {
   <%for (var key in options.vuefrontConfig.molecules) {%>
   components['vfM<%= key %>'] = Vue.component('vfM<%= key %>', <%= vfresolver(options.vuefrontConfig.molecules[key]) %>)<%}%>
 
-  <%for (var key in options.vuefrontConfig.components) {%>
-  components['vf<%= key %>'] = Vue.component('vf<%= key %>', <%= vfresolver(options.vuefrontConfig.components[key]) %>)<%}%>
+  <%for (var key in options.vuefrontConfig.organisms) {%>
+  components['vfO<%= key %>'] = Vue.component('vfO<%= key %>', <%= vfresolver(options.vuefrontConfig.organisms[key]) %>)<%}%>
 
   <%for (var key in options.vuefrontConfig.templates) {%>
-  components['vfTemplate<%= key %>'] = Vue.component('vfTemplate<%= key %>', <%= vfresolver(options.vuefrontConfig.templates[key]) %>)<%}%>
+  components['vfT<%= key %>'] = Vue.component('vfT<%= key %>', <%= vfresolver(options.vuefrontConfig.templates[key]) %>)<%}%>
+
+  <%for (var key in options.vuefrontConfig.components) {%>
+  components['vf<%= key %>'] = Vue.component('vf<%= key %>', <%= vfresolver(options.vuefrontConfig.components[key]) %>)<%}%>
 
   <%for (var key in options.vuefrontConfig.modules) {%>
   components['vfModule<%= key %>'] = Vue.component('vfModule<%= key %>', <%= vfresolver(options.vuefrontConfig.modules[key]) %>)<%}%>
