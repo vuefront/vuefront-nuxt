@@ -1,39 +1,16 @@
 const path = require('path')
-let themeOptions = require('vuefront').default
+let seoConfig = require('vuefront/seo').default
 const _ = require('lodash')
 const ApolloClient = require('apollo-boost').default
 require('isomorphic-fetch')
 const ampify = require('./plugins/ampify')
 
-const routePath = options => {
-  if (typeof options['component'] !== 'undefined') {
-    return `import('${options.component}').then((m) => {
-            return m.default || m
-          })`
-  } else if (typeof options === 'string') {
-    return `import('${options}').then((m) => {
-            return m.default || m
-          })`
-  } else {
-    return `import('${options.package}').then((m) => {
-            return m['${options.el}'].default || m['${options.el}']
-        })`
-  }
-}
-
-const mergeConfig = (objValue, srcValue) => {
-  if (_.isArray(objValue)) {
-    return objValue.concat(srcValue)
-  } else if (_.isObject(objValue)) {
-    return _.merge(objValue, srcValue)
-  } else {
-    return srcValue
-  }
-}
-
 export default async function vuefrontModule(_moduleOptions) {
   const isNuxtVersion2 = this.options.build.transpile
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
+
+  const theme = process.env.VUEFRONT_THEME || 'default'
+
   const defaultPort =
     process.env.API_PORT ||
     process.env.PORT ||
@@ -69,55 +46,35 @@ export default async function vuefrontModule(_moduleOptions) {
     browserBaseURL = moduleOptions.proxy ? prefix : baseURL
   }
 
-  const config = require(this.options.rootDir + '/vuefront.config').default
-  if (typeof config.theme !== 'undefined') {
-    const customThemeOptions = require(config.theme).default
-    themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
-  }
-  themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
-
   const client = new ApolloClient({
     uri: baseURL
   })
 
   let whiteList = []
   let routes = []
-
-  for (const url in themeOptions.pages) {
-    const pageComponent = themeOptions.pages[url]
+  for (const url in seoConfig) {
+    const pageComponent = seoConfig[url]
     if (_.isObject(pageComponent)) {
       if (!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
         whiteList = [...whiteList, url, '/amp' + url]
-      } else if(_.isUndefined(pageComponent.generate) && !url.includes(':')) {
+      } else if (_.isUndefined(pageComponent.generate) && !url.includes(':')) {
         whiteList = [...whiteList, url, '/amp' + url]
       }
       let result = []
       if (!_.isUndefined(pageComponent.seo)) {
-        let seoResolver = ''
-        if (typeof pageComponent.seo === 'string') {
-          seoResolver = require(pageComponent.seo).default
-        } else {
-          seoResolver = require(pageComponent.seo.package)
-          if (typeof pageComponent.seo.path === 'string') {
-            seoResolver = seoResolver[pageComponent.seo.path]
-          } else {
-            for (const key in pageComponent.seo.path) {
-              seoResolver = seoResolver[pageComponent.seo.path[key]]
-            }
-          }
-        }
+        let seoResolver = pageComponent.seo
 
         result = await seoResolver({ client })
       }
       routes.push({
         name: url.replace('/', '_').replace(':', '_'),
         path: url,
-        component: routePath(pageComponent)
+        component: pageComponent.component
       })
       routes.push({
         name: 'amp_' + url.replace('/', '_').replace(':', '_'),
         path: '/amp' + url,
-        component: routePath(pageComponent)
+        component: pageComponent.component
       })
       if (!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
         for (const urlKey in result) {
@@ -141,13 +98,13 @@ export default async function vuefrontModule(_moduleOptions) {
             routes.push({
               name: result[urlKey].keyword,
               path: '/' + result[urlKey].keyword,
-              component: routePath(pageComponent),
+              component: pageComponent.component,
               props: { ...result[urlKey], url }
             })
             routes.push({
               name: 'amp_' + result[urlKey].keyword,
               path: '/amp/' + result[urlKey].keyword,
-              component: routePath(pageComponent),
+              component: pageComponent.component,
               props: { ...result[urlKey], url }
             })
           }
@@ -158,12 +115,12 @@ export default async function vuefrontModule(_moduleOptions) {
       routes.push({
         name: url.replace('/', '_').replace(':', '_'),
         path: url,
-        component: routePath(pageComponent)
+        component: pageComponent.component
       })
       routes.push({
         name: 'amp_' + url.replace('/', '_').replace(':', '_'),
         path: '/amp' + url,
-        component: routePath(pageComponent)
+        component: pageComponent.component
       })
     }
   }
@@ -175,7 +132,8 @@ export default async function vuefrontModule(_moduleOptions) {
       fileName: `vuefront/routes${i + 1}.js`,
       src: path.resolve(__dirname, './routes.js'),
       options: {
-        routes: _.slice(routes, i * 500, i * 500 + 500)
+        routes: _.slice(routes, i * 500, i * 500 + 500),
+        theme
       }
     })
   }
@@ -205,7 +163,7 @@ export default async function vuefrontModule(_moduleOptions) {
     fileName: 'vuefront.js',
     src: path.resolve(__dirname, './plugin.js'),
     options: {
-      vuefrontConfig: themeOptions,
+      theme,
       debug: this.options.dev,
       browserBaseURL,
       baseURL,
@@ -259,7 +217,7 @@ export default async function vuefrontModule(_moduleOptions) {
       rules.push(blockRules)
     }
 
-    const vuefrontRe = 'vuefront/lib'
+    const vuefrontRe = 'vuefront'
     if (isNuxtVersion2) {
       this.options.build.transpile.push(vuefrontRe)
     } else {

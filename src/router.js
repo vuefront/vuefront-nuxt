@@ -1,4 +1,5 @@
 import Vue from 'vue'
+
 import Router from 'vue-router'
 import { createRouter as createDefaultRouter } from './defaultRouter'
 <% for(var i=0; i < options.pages; i++) {%>

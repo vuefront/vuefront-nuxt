@@ -3,23 +3,32 @@ import VueI18n from 'vue-i18n'
 import ApolloClient from "apollo-boost";
 import _ from 'lodash'
 import 'isomorphic-fetch'
-<%
-const vfresolver = (options) => {
-  if(typeof options === 'string') {
-    return `(require('${options}').default ? require('${options}').default:require('${options}'))`
-  } else if(typeof options.el !== 'undefined') {
-    return `require('${options.package}')['${options.el}']`
-  } else if(typeof options.path !== 'undefined') {
-    let result = `require('${options.package}')`
-    for (const key in options.path) {
-      result += `['${options.path[key]}']`
-    }
-    return result
+import mainConfig from 'vuefront'
+import userConfig from '~/vuefront.config'
+<% if (options.theme !== 'default' ) { %>
+import themeConfig from '<%= options.theme %>'
+<% } %>
+
+const mergeConfig = (objValue, srcValue) => {
+  if (_.isArray(objValue)) {
+    return objValue.concat(srcValue)
+  } else if (_.isObject(objValue)) {
+    return _.merge(objValue, srcValue)
+  } else {
+    return srcValue
   }
 }
-%>
-<%for (var key in options.vuefrontConfig.css) {%>
-import '<%= options.vuefrontConfig.css[key] %>'<%}%>
+
+let themeOptions = mainConfig
+
+if (typeof themeConfig !== 'undefined') {
+  themeOptions = _.mergeWith(themeOptions, themeConfig, mergeConfig)
+}
+themeOptions = _.mergeWith(themeOptions, userConfig, mergeConfig)
+
+for (var key in themeOptions.css) {
+    themeOptions.css[key]()
+}
 
 Vue.use(VueI18n)
 
@@ -54,15 +63,15 @@ export const init = (ctx, inject) => {
 function loadLocaleMessages(options) {
   const locales = require.context(`~/locales`, true, /\.json$/)
   const messages = {}
- 
-  <% for (var key in options.vuefrontConfig.locales) { %>
-  if(_.isUndefined(messages['<%=key%>'])) {
-    messages['<%=key%>'] = {}
+
+  for (var key in options.locales) {
+    if(_.isUndefined(messages[key])) {
+      messages[key] = {}
+    }
+    for (var key2 in options.locales[key]) {
+      messages[key] = _.merge({}, messages[key], options.locales[key][key2])
+    }
   }
-  <% for (var key2 in options.vuefrontConfig.locales[key]) { %>
-  messages['<%=key%>'] = _.merge({}, messages['<%=key%>'], <%= vfresolver(options.vuefrontConfig.locales[key][key2])%>)
-  <%}%>
-  <% } %>
   locales.keys().forEach(key => {
     const local = /^.\/([a-zA-Z-]+)\//.exec(key)[1]
     if(_.isUndefined(messages[local])) {
@@ -77,16 +86,10 @@ function loadLocaleMessages(options) {
   return messages
 }
 
-<%for (var key in options.vuefrontConfig.plugins) {%>
-import plugin<%= key %> from '<%= options.vuefrontConfig.plugins[key] %>'
-<%}%>
-
 export default async (ctx, inject) => {
+
   init(ctx, inject)
-  const options = <%= JSON.stringify(options.vuefrontConfig) %>
-  <%for (var key in options.vuefrontConfig.plugins) {%>
-    await plugin<%= key %>(ctx)
-  <%}%>
+
   const components = {
       element: {},
       template: {},
@@ -101,34 +104,42 @@ export default async (ctx, inject) => {
       opts.preserveState = false
     }
   }
-  <%for (var key in options.vuefrontConfig.store) {
-     if (typeof options.vuefrontConfig.store[key].module !== 'undefined') { %>
-  ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true, ...<%= vfresolver(options.vuefrontConfig.store[key].module) %>}, opts)<% } else {%>
-  ctx.store.registerModule(<%= JSON.stringify(options.vuefrontConfig.store[key].path) %>, {namespaced: true}, opts)<% } }%>
 
-  <%for (var key in options.vuefrontConfig.atoms) {%>
-  components['vfA<%= key %>'] = Vue.component('vfA<%= key %>', <%= vfresolver(options.vuefrontConfig.atoms[key]) %>)<%}%>
+    for (var key in themeOptions.store) {
+     if (typeof themeOptions.store[key].module !== 'undefined') {
+      ctx.store.registerModule(themeOptions.store[key].path, {namespaced: true, ...themeOptions.store[key].module}, opts)
+      } else {
+      ctx.store.registerModule(themeOptions.store[key].path, {namespaced: true}, opts)
+      } 
+    }
 
-  <%for (var key in options.vuefrontConfig.molecules) {%>
-  components['vfM<%= key %>'] = Vue.component('vfM<%= key %>', <%= vfresolver(options.vuefrontConfig.molecules[key]) %>)<%}%>
+  for (var key in themeOptions.atoms) {
+    components[`vfA${key}`] = Vue.component(`vfA${key}`, themeOptions.atoms[key])
+  }
 
-  <%for (var key in options.vuefrontConfig.organisms) {%>
-  components['vfO<%= key %>'] = Vue.component('vfO<%= key %>', <%= vfresolver(options.vuefrontConfig.organisms[key]) %>)<%}%>
+  for (var key in themeOptions.molecules) {
+    components[`vfM${key}`] = Vue.component(`vfM${key}`, themeOptions.molecules[key])
+  }
 
-  <%for (var key in options.vuefrontConfig.templates) {%>
-  components['vfT<%= key %>'] = Vue.component('vfT<%= key %>', <%= vfresolver(options.vuefrontConfig.templates[key]) %>)<%}%>
+  for (var key in themeOptions.organisms) {
+    components[`vfO${key}`] = Vue.component(`vfO${key}`, themeOptions.organisms[key])
+  }
 
-  <%for (var key in options.vuefrontConfig.components) {%>
-  components['vf<%= key %>'] = Vue.component('vf<%= key %>', <%= vfresolver(options.vuefrontConfig.components[key]) %>)<%}%>
-
-  <%for (var key in options.vuefrontConfig.modules) {%>
-  components['vfModule<%= key %>'] = Vue.component('vfModule<%= key %>', <%= vfresolver(options.vuefrontConfig.modules[key]) %>)<%}%>
-
-  <%for (var key in options.vuefrontConfig.loaders) {%>
-    components['vfLoader<%= key %>'] = Vue.component('vfLoader<%= key %>', <%= vfresolver(options.vuefrontConfig.loaders[key]) %>)<%}%>
+  for (var key in themeOptions.templates) {
+    components[`vfT${key}`] = Vue.component(`vfT${key}`, themeOptions.templates[key])
+  }
+  for (var key in themeOptions.components) {
+    components[`vf${key}`] = Vue.component(`vf${key}`, themeOptions.components[key])
+  }
+  for (var key in themeOptions.modules) {
+    components[`vfModule${key}`] = Vue.component(`vfModule${key}`, themeOptions.modules[key])
+  }
+  for (var key in themeOptions.loaders) {
+    components[`vfLoader${key}`] = Vue.component(`vfLoader${key}`, themeOptions.loaders[key])
+  }
 
   inject('vuefront', {
-    options,
+    options: themeOptions,
     components,
     baseURL,
     get isClient() {
@@ -155,7 +166,7 @@ export default async (ctx, inject) => {
 
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
-    messages: loadLocaleMessages(options)
+    messages: loadLocaleMessages(themeOptions)
   })
 
 }
