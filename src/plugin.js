@@ -142,6 +142,13 @@ export default async (ctx, inject) => {
     options: themeOptions,
     components,
     baseURL,
+    get isAuth() {
+      return ctx.store.getters['common/customer/auth']
+    },
+    logout() {
+      ctx.store.dispatch('common/customer/logout')
+      ctx.router.push("/account/login");
+    },
     get isClient() {
       return process.client
     },
