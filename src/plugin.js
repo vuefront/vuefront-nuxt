@@ -131,11 +131,11 @@ export default async (ctx, inject) => {
   for (var key in themeOptions.components) {
     components[`vf${key}`] = Vue.component(`vf${key}`, themeOptions.components[key])
   }
-  for (var key in themeOptions.modules) {
-    components[`vfModule${key}`] = Vue.component(`vfModule${key}`, themeOptions.modules[key])
+  for (var key in themeOptions.extensions) {
+    components[`vfE${key}`] = Vue.component(`vfE${key}`, themeOptions.extensions[key])
   }
   for (var key in themeOptions.loaders) {
-    components[`vfLoader${key}`] = Vue.component(`vfLoader${key}`, themeOptions.loaders[key])
+    components[`vfL${key}`] = Vue.component(`vfL${key}`, themeOptions.loaders[key])
   }
 
   inject('vuefront', {
