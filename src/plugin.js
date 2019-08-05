@@ -61,7 +61,16 @@ export const init = (ctx, inject) => {
 
         headers['Cookie'] = _.map(
           ctx.app.$cookies.getAll(),
-          (value, index) => index + '=' + JSON.stringify(value)
+          (value, index) => {
+            let resValue = value
+            if(typeof value === 'object') {
+              resValue = JSON.stringify(resValue)
+            }
+            if (typeof value === 'array') {
+              resValue = JSON.stringify(resValue)
+            }
+            return index + '=' + resValue
+          }
         ).join(';')
 
         operation.setContext({
