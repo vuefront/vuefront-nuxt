@@ -167,9 +167,10 @@ export default async (ctx, inject) => {
     get isAuth() {
       return ctx.store.getters['common/customer/auth']
     },
-    logout() {
-      ctx.store.dispatch('common/customer/logout')
-      ctx.router.push("/account/login");
+    async logout() {
+      await ctx.store.dispatch('common/customer/logout')
+      
+      ctx.app.router.push("/account/login");
     },
     get isClient() {
       return process.client
