@@ -49,10 +49,23 @@ export const init = (ctx, inject) => {
             credentials: 'include'
           }
         });
+
+        const headers = {}
+        if (
+          ctx.store.getters['common/customer/token']
+        ) {
+          headers['Authorization'] = `Bearer ${
+            ctx.store.getters['common/customer/token']
+          }`
+        }
+
+        headers['Cookie'] = _.map(
+          ctx.app.$cookies.getAll(),
+          (value, index) => index + '=' + JSON.stringify(value)
+        ).join(';')
+
         operation.setContext({
-          headers: {
-            'Cookie': _.map(ctx.app.$cookies.getAll(), (value, index) => (index + '=' + value)).join(';')
-          }
+          headers
         });
       }
     });
