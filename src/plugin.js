@@ -8,6 +8,14 @@ import userConfig from '~/vuefront.config'
 <% if (options.theme !== 'default' ) { %>
 import themeConfig from '<%= options.theme %>'
 <% } %>
+<% if (typeof options.themeOptions.css !== 'undefined' ) { %>
+  <% for (const key in options.themeOptions.css) { %>
+    <% if (options.themeOptions.css[key] !== 'null' ) { %>
+import '<%= options.themeOptions.css[key] %>'
+    <% } %>
+  <% } %>
+<% } %>
+  
 
 const mergeConfig = (objValue, srcValue) => {
   if (_.isArray(objValue)) {
@@ -26,10 +34,6 @@ if (typeof themeConfig !== 'undefined') {
 }
 themeOptions = _.mergeWith(themeOptions, userConfig, mergeConfig)
 
-for (var key in themeOptions.css) {
-    themeOptions.css[key]()
-}
-
 Vue.use(VueI18n)
 
 const baseURL = process.browser
@@ -42,6 +46,16 @@ export const init = (ctx, inject) => {
       headers: {
         accept: 'application/json; charset=UTF-8',
         'content-type': 'application/json; charset=UTF-8'
+      },
+      onError: (error) => {
+        if (error.graphQLErrors) {
+          console.log('ApolloClient graphQLErrors')
+          console.log(error.graphQLErrors)
+        }
+        if (error.networkError) {
+          console.log('ApolloClient networkError')
+          console.log(error.networkError.bodyText)
+        }
       },
       request: (operation) => {
         operation.setContext({

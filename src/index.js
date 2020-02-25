@@ -1,9 +1,58 @@
+import { readFileSync } from 'fs'
+
 const path = require('path')
 let seoConfig = require('vuefront/seo').default
 const _ = require('lodash')
 const ApolloClient = require('apollo-boost').default
 require('isomorphic-fetch')
 const ampify = require('./plugins/ampify')
+var fs = require('fs');
+
+const readConfigFile = (path) => {
+  const result = {}
+  try {
+      var filename = require.resolve(path);
+      const configContent = fs.readFileSync(filename, 'utf8');
+      let matched = /css.*:[\s\n\r]+\{([^{]+)\}/.exec(configContent)
+      if(!_.isEmpty(matched)) {
+        const cssConfig = 
+        matched[1]
+          .replace(/\s\n/, '')
+          .split(',')
+          .map((str) => 
+            str
+            .split(':')
+            .map(strV => 
+              strV
+              .trim()
+              .replace(/\'/g, '')
+              )
+            ).reduce((accumulator, currentValue) => {
+              accumulator[currentValue[0]] = currentValue[1]
+              return accumulator
+            }, {})
+
+            result.css = cssConfig
+      }
+      matched = /theme: \'(.*)\'/.exec(configContent)
+      if(!_.isEmpty(matched)) {
+        result.theme = matched[1]
+      }
+  } catch (e) {
+  }
+
+  return result
+}
+
+const mergeConfig = (objValue, srcValue) => {
+  if (_.isArray(objValue)) {
+    return objValue.concat(srcValue)
+  } else if (_.isObject(objValue)) {
+    return _.merge(objValue, srcValue)
+  } else {
+    return srcValue
+  }
+}
 
 export default async function vuefrontModule(_moduleOptions) {
   const isNuxtVersion2 = this.options.build.transpile
@@ -159,6 +208,17 @@ export default async function vuefrontModule(_moduleOptions) {
     src: defaultRouter
   })
 
+  let themeOptions = readConfigFile('vuefront')
+
+  const config = readConfigFile(this.options.rootDir + '/vuefront.config.js')
+
+  if (typeof config.theme !== 'undefined') {
+    const customThemeOptions = readConfigFile(config.theme)
+    themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
+  }
+
+  themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
+
   this.addPlugin({
     fileName: 'vuefront.js',
     src: path.resolve(__dirname, './plugin.js'),
@@ -167,7 +227,8 @@ export default async function vuefrontModule(_moduleOptions) {
       debug: this.options.dev,
       browserBaseURL,
       baseURL,
-      pages
+      pages,
+      themeOptions
     }
   })
 

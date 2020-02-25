@@ -15,6 +15,31 @@ const mergeConfig = (objValue, srcValue) => {
     }
 }
 
+const breadcrumbsLoad = (component) => {
+  component.serverPrefetch = function() {
+    return new Promise(async (resolve) => {
+      this.$store.dispatch('common/breadcrumbs/init');
+      if(this.handleLoadData) {
+        await this.handleLoadData(this)
+      }
+      await this.$store.dispatch('common/breadcrumbs/load');
+      resolve()
+    })
+  }
+  component.created = function() {
+    if (typeof this.loaded !== 'undefined') {
+      if(!this.loaded) {
+        this.$store.dispatch('common/breadcrumbs/init');
+        this.$watch('loaded', () => {
+            this.$store.dispatch('common/breadcrumbs/load');
+        })
+      }
+    } else {
+        this.$store.dispatch('common/breadcrumbs/load');
+    }
+  }
+}
+
 let themeOptions = mainConfig
 if (typeof themeConfig !== 'undefined') {
     themeOptions = _.mergeWith(themeOptions, themeConfig, mergeConfig)
@@ -29,18 +54,9 @@ export const getRoutes = () => {
         props: <%= JSON.stringify(options.routes[i].props) %>,
         <% } %>
         component: () => {
-            <%= 'themeOptions.pages.'+options.routes[i].component %>.created = function() {
-                if (typeof this.loaded !== 'undefined') {
-                    this.$store.dispatch('common/breadcrumbs/init');
-                    this.$watch('loaded', () => {
-                        this.$store.dispatch('common/breadcrumbs/load');
-                    })
-                } else {
-                    this.$store.dispatch('common/breadcrumbs/load');
-
-                }
-            }
-            return <%= 'themeOptions.pages.'+options.routes[i].component %>
+          const component = <%= 'themeOptions.pages.'+options.routes[i].component %>
+          breadcrumbsLoad(component)
+          return component
         }
 
     }, <% } %>]
