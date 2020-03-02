@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const getImport = (name) => {
+const getImport = (name, type, config, tag) => {
   let comImport = false
 
 
@@ -77,7 +77,7 @@ module.exports = function match (_, config, { kebabTag, camelTag: tag }) {
   const type = m[1]
   const name = m[2]
 
-  let comImport = getImport(name)
+  let comImport = getImport(name, type, config, tag)
 
   if(type === 'O' && name === 'virtual') {
     comImport = ''
