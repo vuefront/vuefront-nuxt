@@ -11,7 +11,8 @@ export function createRouter(ssrContext) {
   const defaultRouter = createDefaultRouter(ssrContext)
   return new Router({
     ...defaultRouter.options,
-    routes: [<% for(var i=0; i < options.pages; i++) {%>
+    routes: [
+      <% for(var i=0; i < options.pages; i++) {%>
     ...routes<%= i+1%>,<% } %>
     ...defaultRouter.options.routes
     ]

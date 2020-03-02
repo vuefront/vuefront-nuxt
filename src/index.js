@@ -1,61 +1,13 @@
-import { readFileSync } from 'fs'
-
+import setupRoutes from './setupRoutes'
+import setupConfig from './setupConfig'
+import setupBuild from './setupBuild'
+import setupImages from './setupImages'
 const path = require('path')
-let seoConfig = require('vuefront/seo').default
 const _ = require('lodash')
-const ApolloClient = require('apollo-boost').default
-require('isomorphic-fetch')
 const ampify = require('./plugins/ampify')
 var fs = require('fs');
 
-const readConfigFile = (path) => {
-  const result = {}
-  try {
-      var filename = require.resolve(path);
-      const configContent = fs.readFileSync(filename, 'utf8');
-      let matched = /css.*:[\s\n\r]+\{([^{]+)\}/.exec(configContent)
-      if(!_.isEmpty(matched)) {
-        const cssConfig = 
-        matched[1]
-          .replace(/\s\n/, '')
-          .split(',')
-          .map((str) => 
-            str
-            .split(':')
-            .map(strV => 
-              strV
-              .trim()
-              .replace(/\'/g, '')
-              )
-            ).reduce((accumulator, currentValue) => {
-              accumulator[currentValue[0]] = currentValue[1]
-              return accumulator
-            }, {})
-
-            result.css = cssConfig
-      }
-      matched = /theme: \'(.*)\'/.exec(configContent)
-      if(!_.isEmpty(matched)) {
-        result.theme = matched[1]
-      }
-  } catch (e) {
-  }
-
-  return result
-}
-
-const mergeConfig = (objValue, srcValue) => {
-  if (_.isArray(objValue)) {
-    return objValue.concat(srcValue)
-  } else if (_.isObject(objValue)) {
-    return _.merge(objValue, srcValue)
-  } else {
-    return srcValue
-  }
-}
-
 export default async function vuefrontModule(_moduleOptions) {
-  const isNuxtVersion2 = this.options.build.transpile
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
 
   const theme = process.env.VUEFRONT_THEME || 'default'
@@ -95,84 +47,20 @@ export default async function vuefrontModule(_moduleOptions) {
     browserBaseURL = moduleOptions.proxy ? prefix : baseURL
   }
 
-  const client = new ApolloClient({
-    uri: baseURL
-  })
+  const themeOptions = setupConfig(this.options.rootDir)
 
-  let whiteList = []
-  let routes = []
-  for (const url in seoConfig) {
-    const pageComponent = seoConfig[url]
-    if (_.isObject(pageComponent)) {
-      if (!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
-        whiteList = [...whiteList, url, '/amp' + url]
-      } else if (_.isUndefined(pageComponent.generate) && !url.includes(':')) {
-        whiteList = [...whiteList, url, '/amp' + url]
-      }
-      let result = []
-      if (!_.isUndefined(pageComponent.seo)) {
-        let seoResolver = pageComponent.seo
-
-        result = await seoResolver({ client })
-      }
-      routes.push({
-        name: url.replace('/', '_').replace(':', '_'),
-        path: url,
-        component: pageComponent.component
-      })
-      routes.push({
-        name: 'amp_' + url.replace('/', '_').replace(':', '_'),
-        path: '/amp' + url,
-        component: pageComponent.component
-      })
-      if (!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
-        for (const urlKey in result) {
-          if (result[urlKey].keyword !== '') {
-            if (
-              !_.isUndefined(pageComponent.generate) &&
-              pageComponent.generate
-            ) {
-              whiteList = [
-                ...whiteList,
-                '/' + result[urlKey].keyword,
-                '/amp/' + result[urlKey].keyword
-              ]
-            } else if (_.isUndefined(pageComponent.generate)) {
-              whiteList = [
-                ...whiteList,
-                '/' + result[urlKey].keyword,
-                '/amp/' + result[urlKey].keyword
-              ]
-            }
-            routes.push({
-              name: result[urlKey].keyword,
-              path: '/' + result[urlKey].keyword,
-              component: pageComponent.component,
-              props: { ...result[urlKey], url }
-            })
-            routes.push({
-              name: 'amp_' + result[urlKey].keyword,
-              path: '/amp/' + result[urlKey].keyword,
-              component: pageComponent.component,
-              props: { ...result[urlKey], url }
-            })
-          }
-        }
-      }
-    } else {
-      whiteList = [...whiteList, url, '/amp' + url]
-      routes.push({
-        name: url.replace('/', '_').replace(':', '_'),
-        path: url,
-        component: pageComponent.component
-      })
-      routes.push({
-        name: 'amp_' + url.replace('/', '_').replace(':', '_'),
-        path: '/amp' + url,
-        component: pageComponent.component
-      })
+  if(!this.options.css) {
+    this.options.css = []
+  }
+  if(themeOptions.css) {
+    for (const key in themeOptions.css) {
+      this.options.css.push(themeOptions.css[key])
     }
   }
+
+  const images = setupImages(themeOptions)
+
+  const {routes, whiteList} = await setupRoutes(baseURL, themeOptions)
 
   const pages = _.ceil(routes.length / 500)
 
@@ -182,7 +70,8 @@ export default async function vuefrontModule(_moduleOptions) {
       src: path.resolve(__dirname, './routes.js'),
       options: {
         routes: _.slice(routes, i * 500, i * 500 + 500),
-        theme
+        theme,
+        themeOptions
       }
     })
   }
@@ -208,21 +97,12 @@ export default async function vuefrontModule(_moduleOptions) {
     src: defaultRouter
   })
 
-  let themeOptions = readConfigFile('vuefront')
-
-  const config = readConfigFile(this.options.rootDir + '/vuefront.config.js')
-
-  if (typeof config.theme !== 'undefined') {
-    const customThemeOptions = readConfigFile(config.theme)
-    themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
-  }
-
-  themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
 
   this.addPlugin({
     fileName: 'vuefront.js',
     src: path.resolve(__dirname, './plugin.js'),
     options: {
+      images,
       theme,
       debug: this.options.dev,
       browserBaseURL,
@@ -247,6 +127,10 @@ export default async function vuefrontModule(_moduleOptions) {
 
   this.nuxt.hook('render:route', (url, page, { req, res }) => {
     page.html = ampify(page.html, url)
+  })
+
+  this.nuxt.hook('build:before', () => {
+    setupBuild.call(this, moduleOptions);
   })
 
   this.extendBuild((config, { isServer }) => {
@@ -276,17 +160,6 @@ export default async function vuefrontModule(_moduleOptions) {
         ]
       }
       rules.push(blockRules)
-    }
-
-    const vuefrontRe = 'vuefront'
-    if (isNuxtVersion2) {
-      this.options.build.transpile.push(vuefrontRe)
-    } else {
-      config.externals = [
-        nodeExternals({
-          whitelist: [vuefrontRe]
-        })
-      ]
     }
   })
 }

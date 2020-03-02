@@ -3,36 +3,6 @@ import VueI18n from 'vue-i18n'
 import ApolloClient from "apollo-boost";
 import _ from 'lodash'
 import 'isomorphic-fetch'
-import mainConfig from 'vuefront'
-import userConfig from '~/vuefront.config'
-<% if (options.theme !== 'default' ) { %>
-import themeConfig from '<%= options.theme %>'
-<% } %>
-<% if (typeof options.themeOptions.css !== 'undefined' ) { %>
-  <% for (const key in options.themeOptions.css) { %>
-    <% if (options.themeOptions.css[key] !== 'null' ) { %>
-import '<%= options.themeOptions.css[key] %>'
-    <% } %>
-  <% } %>
-<% } %>
-  
-
-const mergeConfig = (objValue, srcValue) => {
-  if (_.isArray(objValue)) {
-    return objValue.concat(srcValue)
-  } else if (_.isObject(objValue)) {
-    return _.merge(objValue, srcValue)
-  } else {
-    return srcValue
-  }
-}
-
-let themeOptions = mainConfig
-
-if (typeof themeConfig !== 'undefined') {
-  themeOptions = _.mergeWith(themeOptions, themeConfig, mergeConfig)
-}
-themeOptions = _.mergeWith(themeOptions, userConfig, mergeConfig)
 
 Vue.use(VueI18n)
 
@@ -100,14 +70,21 @@ function loadLocaleMessages(options) {
   const locales = require.context(`~/locales`, true, /\.json$/)
   const messages = {}
 
-  for (var key in options.locales) {
-    if(_.isUndefined(messages[key])) {
-      messages[key] = {}
+  <% for (var key in options.themeOptions.locales) { %>
+    if(_.isUndefined(messages['<%= key %>'])) {
+      messages['<%= key %>'] = {}
     }
-    for (var key2 in options.locales[key]) {
-      messages[key] = _.merge({}, messages[key], options.locales[key][key2])
-    }
-  }
+
+    <% for (var key2 in options.themeOptions.locales[key]) { %>
+      <% if (options.themeOptions.locales[key][key2].type === 'full') { %>
+    messages['<%= key %>'] = _.merge({}, messages['<%= key %>'], require('<%= options.themeOptions.locales[key][key2].path %>'))
+    <% } else { %>
+    messages['<%= key %>'] = _.merge({}, messages['<%= key %>'], require('<%= options.themeOptions.locales[key][key2].path %>')['<%= options.themeOptions.locales[key][key2].component %>'])
+      <% } %>
+    <% } %>
+      
+  <% } %>
+
   locales.keys().forEach(key => {
     const local = /^.\/([a-zA-Z-]+)\//.exec(key)[1]
     if(_.isUndefined(messages[local])) {
@@ -126,13 +103,6 @@ export default async (ctx, inject) => {
 
   init(ctx, inject)
 
-  const components = {
-      element: {},
-      template: {},
-      position: {},
-      module: {}
-  }
-
   const opts = {}
 
   if(process.client) {
@@ -140,43 +110,41 @@ export default async (ctx, inject) => {
       opts.preserveState = false
     }
   }
+  
+  <% for (var key in options.themeOptions.store) { %>
+  <% if (typeof options.themeOptions.store[key].module !== 'undefined') {%>
+  <% if (options.themeOptions.store[key].module.type === 'full') { %>
+  ctx.store.registerModule(<%= JSON.stringify(options.themeOptions.store[key].path) %>, {namespaced: true, ...require('<%= options.themeOptions.store[key].module.path %>')}, opts)
+  <% } else { %>
+  ctx.store.registerModule(<%= JSON.stringify(options.themeOptions.store[key].path) %>, {namespaced: true, ...require('<%= options.themeOptions.store[key].module.path %>')['<%= options.themeOptions.store[key].module.component %>']}, opts)
+  <% } %>
+  <% } else { %>
+    ctx.store.registerModule(<%= JSON.stringify(options.themeOptions.store[key].path) %>, {namespaced: true}, opts)
+  <% } %>
+  <% } %>
 
-    for (var key in themeOptions.store) {
-     if (typeof themeOptions.store[key].module !== 'undefined') {
-      ctx.store.registerModule(themeOptions.store[key].path, {namespaced: true, ...themeOptions.store[key].module}, opts)
-      } else {
-      ctx.store.registerModule(themeOptions.store[key].path, {namespaced: true}, opts)
-      } 
-    }
+  const extensions = {}
 
-  for (var key in themeOptions.atoms) {
-    components[`vfA${key}`] = Vue.component(`vfA${key}`, themeOptions.atoms[key])
-  }
+  <% for (var key in options.themeOptions.extensions) { %>
+  <% if (options.themeOptions.extensions[key].type === 'full') { %>
+  extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].component %>');
+  <% } else { %>
+  extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].path %>').then(m => m.<%= options.themeOptions.extensions[key].component %>);<% } %><% } %>
 
-  for (var key in themeOptions.molecules) {
-    components[`vfM${key}`] = Vue.component(`vfM${key}`, themeOptions.molecules[key])
-  }
+  const images = {}
 
-  for (var key in themeOptions.organisms) {
-    components[`vfO${key}`] = Vue.component(`vfO${key}`, themeOptions.organisms[key])
-  }
+  <% for (var key in options.images) { %>
 
-  for (var key in themeOptions.templates) {
-    components[`vfT${key}`] = Vue.component(`vfT${key}`, themeOptions.templates[key])
-  }
-  for (var key in themeOptions.components) {
-    components[`vf${key}`] = Vue.component(`vf${key}`, themeOptions.components[key])
-  }
-  for (var key in themeOptions.extensions) {
-    components[`vfE${key}`] = Vue.component(`vfE${key}`, themeOptions.extensions[key])
-  }
-  for (var key in themeOptions.loaders) {
-    components[`vfL${key}`] = Vue.component(`vfL${key}`, themeOptions.loaders[key])
-  }
+  images.<%= key %> = {}<% if (typeof options.images[key].image !== 'undefined') { %>
+  images.<%= key %>.image = <%= options.images[key].image  %>;
+  <% } %><% if (typeof options.images[key].width !== 'undefined') { %>
+  images.<%= key %>.width = <%= options.images[key].width  %>;
+  images.<%= key %>.height = <%= options.images[key].height  %>;<% } %><% } %>
 
   inject('vuefront', {
-    options: themeOptions,
-    components,
+    layouts: <%= JSON.stringify(options.themeOptions.layouts) %>,
+    extensions,
+    images,
     baseURL,
     get isAuth() {
       return ctx.store.getters['common/customer/auth']
@@ -210,7 +178,7 @@ export default async (ctx, inject) => {
 
   ctx.app.i18n = new VueI18n({
     locale: ctx.store.getters['common/language/locale'],
-    messages: loadLocaleMessages(themeOptions)
+    messages: loadLocaleMessages()
   })
 
 }
