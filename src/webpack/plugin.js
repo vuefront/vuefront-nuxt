@@ -19,6 +19,7 @@ class VuefrontLoaderPlugin {
 
   apply (compiler) {
     // use webpack's RuleSet utility to normalize user rules
+    const config = this.options.config
     const rawRules = compiler.options.module.rules
     const { rules } = new RuleSet(rawRules)
 
@@ -35,6 +36,7 @@ class VuefrontLoaderPlugin {
     vueRule.use.unshift({
       loader: require.resolve('./loader'),
       options: {
+        config,
         rootDir: this.options.rootDir || '',
         match: this.options.match || [],
         attrsMatch: this.options.attrsMatch || []

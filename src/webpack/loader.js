@@ -7,18 +7,16 @@ const fs = require('fs')
 const runtimePaths = {
   installComponents: require.resolve('./runtime/installComponents')
 }
-const setupConfig = require('../setupConfig').default
 
 /**
- * 
+ *
  * @param {string} type
  * @param {string[]} items All tags found
- * @param {*} matches 
+ * @param {*} matches
  * @param {*} component Source component
  */
-function getMatches (type, items, matches, component, rootDir) {
+function getMatches (type, items, matches, component, config) {
   const imports = []
-  const config = setupConfig(rootDir)
 
   items.forEach(item => {
     for (const matcher of matches) {
@@ -64,6 +62,7 @@ module.exports = async function (content, sourceMap) {
   const options = {
     match: [],
     attrsMatch: [],
+    config: {},
     ...getOptions(this)
   }
 
@@ -110,7 +109,7 @@ module.exports = async function (content, sourceMap) {
         }]
       })
     }
-    content = install.call(this, 'installComponents', content, getMatches.call(this, 'Tag', tags, options.match, component, options.rootDir))
+    content = install.call(this, 'installComponents', content, getMatches.call(this, 'Tag', tags, options.match, component, options.config))
   }
 
   this.callback(null, content, sourceMap)

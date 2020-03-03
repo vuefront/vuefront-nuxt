@@ -130,7 +130,7 @@ export default async function vuefrontModule(_moduleOptions) {
   })
 
   this.nuxt.hook('build:before', () => {
-    setupBuild.call(this, moduleOptions);
+    setupBuild.call(this, moduleOptions, themeOptions);
   })
 
   this.extendBuild((config, { isServer }) => {
