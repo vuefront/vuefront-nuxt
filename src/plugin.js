@@ -127,8 +127,7 @@ export default async (ctx, inject) => {
 
   <% for (var key in options.themeOptions.extensions) { %>
   <% if (options.themeOptions.extensions[key].type === 'full') { %>
-  extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].component %>');
-  <% } else { %>
+  extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].path %>');<% } else { %>
   extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].path %>').then(m => m.<%= options.themeOptions.extensions[key].component %>);<% } %><% } %>
 
   const images = {}

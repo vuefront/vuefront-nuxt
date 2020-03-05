@@ -4,14 +4,14 @@ require('isomorphic-fetch')
 const convertComponent = (component, config) => {
   if (config.pages[component].type === 'full') {
     return `import('${config.pages[component].path}').then((m) => {
-      const component = m || m.default
+      const component = m.default || m
       breadcrumbsLoad(component)
       return component
     })`
   } else {
     return `import('${config.pages[component].path}').then((m) => {
       let component = m.${config.pages[component].component}
-      component = component || component.default
+      component = component.default || component
       breadcrumbsLoad(component)
       return component
     })`

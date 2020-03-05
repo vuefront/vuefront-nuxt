@@ -5,7 +5,6 @@ import setupImages from './setupImages'
 const path = require('path')
 const _ = require('lodash')
 const ampify = require('./plugins/ampify')
-var fs = require('fs');
 
 export default async function vuefrontModule(_moduleOptions) {
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }

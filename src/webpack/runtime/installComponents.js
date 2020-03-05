@@ -14,14 +14,6 @@ module.exports = function installComponents (component, components) {
   options.components = options.components || {}
 
   for (var i in components) {
-    // if(i === 'vf-o-header') {
-    //   console.log(component)
-    //   console.log(components)
-    // }
-    // if(i === 'VfOHeader') {
-    //   console.log(component)
-    //   console.log(components)
-    // }
     options.components[i] = options.components[i] || components[i]
   }
 }

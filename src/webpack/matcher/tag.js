@@ -1,68 +1,54 @@
 const _ = require('lodash')
+const renderImport = (component, tag) => {
+  let result = ''
+
+  if (component.type === 'full') {
+    result = `import ${tag} from '${component.path}';`
+  } else {
+    result = `import {${component.component} as ${tag}} from '${component.path}';`
+  }
+
+  return result
+}
 const getImport = (name, type, config, tag) => {
   let comImport = false
 
-
   switch (type) {
-    case 'A': 
+    case 'A':
     if(!config.atoms[name]) {
       return
     }
-    if (config.atoms[name].type === 'full') {
-      comImport = `const ${tag} = () => import('${config.atoms[name].path}');`
-    } else {
-      comImport = `const ${tag} = () => import('${config.atoms[name].path}').then(m => m.${config.atoms[name].component});`
-    }
+    comImport = renderImport(config.atoms[name], tag)
     break;
-    case 'M': 
+    case 'M':
     if(!config.molecules[name]) {
       return
     }
-    if (config.molecules[name].type === 'full') {
-      comImport = `const ${tag} = () => import('${config.molecules[name].path}');`
-    } else {
-      comImport = `const ${tag} = () => import('${config.molecules[name].path}').then(m => m.${config.molecules[name].component});`
-    }
+    comImport = renderImport(config.molecules[name], tag)
     break;
-    case 'O': 
+    case 'O':
     if(!config.organisms[name]) {
       return
     }
-    if (config.organisms[name].type === 'full') {
-      comImport = `const ${tag} = () => import('${config.organisms[name].path}');`
-    } else {
-      comImport = `const ${tag} = () => import('${config.organisms[name].path}').then(m => m.${config.organisms[name].component});`
-    }
+    comImport = renderImport(config.organisms[name], tag)
     break;
-    case 'T': 
+    case 'T':
     if(!config.templates[name]) {
       return
     }
-    if (config.templates[name].type === 'full') {
-      comImport = `const ${tag} = () => import('${config.templates[name].path}');`
-    } else {
-      comImport = `const ${tag} = () => import('${config.templates[name].path}').then(m => m.${config.templates[name].component});`
-    }
+    comImport = renderImport(config.templates[name], tag)
     break;
-    case 'L': 
+    case 'L':
     if(!config.loaders[name]) {
       return
     }
-    if (config.loaders[name].type === 'full') {
-      comImport = `const ${tag} = () => import('${config.loaders[name].path}');`
-    } else {
-      comImport = `const ${tag} = () => import('${config.loaders[name].path}').then(m => m.${config.loaders[name].component});`
-    }
+    comImport = renderImport(config.loaders[name], tag)
     break;
-    case 'E': 
+    case 'E':
     if(!config.extensions[name]) {
       return
     }
-    if (config.extensions[name].type === 'full') {
-      comImport = `const ${tag} = () => import('${config.extensions[name].path}');`
-    } else {
-      comImport = `const ${tag} = () => import('${config.extensions[name].path}').then(m => m.${config.extensions[name].component});`
-    }
+    comImport = renderImport(config.extensions[name], tag)
     break;
   }
   return comImport
@@ -78,11 +64,6 @@ module.exports = function match (_, config, { kebabTag, camelTag: tag }) {
   const name = m[2]
 
   let comImport = getImport(name, type, config, tag)
-
-  if(type === 'O' && name === 'virtual') {
-    comImport = ''
-  }
-  
 
   return [tag, comImport]
 }

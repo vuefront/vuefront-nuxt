@@ -20,15 +20,24 @@ const convertPath = (config) => {
     result[keys[type]] = {}
     for(const key in config[keys[type]]) {
       try {
+        require.resolve(config[keys[type]][key])
         result[keys[type]][key] = {
           type: 'full',
-          path: require.resolve(config[keys[type]][key])
+          path: config[keys[type]][key]
         }
       } catch(e) {
-        result[keys[type]][key] = {
-          type: 'inside',
-          path: config.root.components,
-          component: config[keys[type]][key]
+        try {
+          require.resolve(config.root.components + '/' +config[keys[type]][key])
+          result[keys[type]][key] = {
+            type: 'full',
+            path: config.root.components + '/' +config[keys[type]][key]
+          }
+        } catch(e) {
+          result[keys[type]][key] = {
+            type: 'inside',
+            path: config.root.components,
+            component: config[keys[type]][key]
+          }
         }
       }
     }
@@ -44,20 +53,32 @@ const convertPath = (config) => {
         continue
       }
       try {
+        require.resolve(config.store[key].module)
         result.store[key] = {
           ...config.store[key],
           module: {
             type: 'full',
-            path: require.resolve(config.store[key].module)
+            path: config.store[key].module
           }
         }
       } catch(e) {
-        result.store[key] = {
-          ...config.store[key],
-          module: {
-            type: 'inside',
-            path: config.root.store,
-            component: config.store[key].module
+        try {
+          require.resolve(config.root.store + '/' + config.store[key].module)
+          result.store[key] = {
+            ...config.store[key],
+            module: {
+              type: 'full',
+              path: config.root.store + '/' + config.store[key].module
+            }
+          }
+        } catch(e) {
+          result.store[key] = {
+            ...config.store[key],
+            module: {
+              type: 'inside',
+              path: config.root.store,
+              component: config.store[key].module
+            }
           }
         }
       }
@@ -70,21 +91,30 @@ const convertPath = (config) => {
       result.locales[key] = []
       for (const key2 in config.locales[key]) {
         try {
+          require.resolve(config.locales[key][key2])
           result.locales[key][key2] = {
             type: 'full',
-            path: require.resolve(config.locales[key][key2])
+            path: config.locales[key][key2]
           }
         } catch(e) {
-          result.locales[key][key2] = {
-            type: 'inside',
-            path: config.root.locales,
-            component: config.locales[key][key2]
+          try {
+            require.resolve(config.root.locales + '/' + config.locales[key][key2])
+            result.locales[key][key2] = {
+              type: 'full',
+              path: config.root.locales + '/' + config.locales[key][key2]
+            }
+          } catch(e) {
+            result.locales[key][key2] = {
+              type: 'inside',
+              path: config.root.locales,
+              component: config.locales[key][key2]
+            }
           }
         }
       }
     }
   }
-
+  
   return result
 }
 
