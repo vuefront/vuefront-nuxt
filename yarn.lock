@@ -1962,10 +1962,10 @@ vue@^2.6.11:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
   integrity sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ==
 
-vuefront@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.1.tgz#fc6cb4975be5f9fe609483f24d0f87fa87693118"
-  integrity sha512-UAk+a75lweZOzBPU4VVru136nt4yGhVdNvkxDv8ht4UHBUnlr5vv+9NS0jMfvCAKEqXBMThgvF91gBh9lOxLvw==
+vuefront@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.3.tgz#c249f9119b4e21d20ed9e6c3e16d8e0dab1f2af7"
+  integrity sha512-KJkV03Wsnv0sDtQ5SkA7vZzNMtP4dgj16OmpIz0pKBPp8vIJKS4216YHTULzr/Kp79e9D7TEj0V3wH8E4dWaLg==
   dependencies:
     "@babel/standalone" "^7.8.4"
     "@fortawesome/fontawesome-free" "^5.12.1"
