@@ -113,6 +113,20 @@ export default async function vuefrontModule(_moduleOptions) {
 
   this.options.generate.routes = whiteList
 
+  this.nuxt.hook('generate:routeCreated', async ({route, path, errors}) => {
+    if(errors.length) {
+      for (const key in errors) {
+        const regex = /^Error:\s+([^.]+)/gm;
+        const m = regex.exec(errors[key].error)
+        if(m.length) {
+          console.error(m[1])
+        } else {
+          console.error(errors[key].error)
+        }
+      }
+    }
+  })
+
   this.nuxt.hook('generate:extendRoutes', async routes => {
     const routesToGenerate = routes.filter(page =>
       whiteList.includes(page.route)

@@ -1,5 +1,7 @@
 const _ = require('lodash')
 
+let rootPath = ''
+
 const mergeConfig = (objValue, srcValue) => {
   if (_.isArray(objValue)) {
     return objValue.concat(srcValue)
@@ -10,6 +12,17 @@ const mergeConfig = (objValue, srcValue) => {
   }
 }
 
+const checkPath = (path) => {
+  const newPath = _.replace(path, /^(~)/, rootPath)
+  try {
+    require.resolve(newPath)
+    return true
+  } catch (e) {
+    
+  }
+  return false
+}
+
 const convertPath = (config) => {
   let result = {}
   const keys = ['atoms', 'molecules', 'organisms', 'templates', 'pages', 'loaders', 'extensions']
@@ -18,26 +31,23 @@ const convertPath = (config) => {
       continue
     }
     result[keys[type]] = {}
-    for(const key in config[keys[type]]) {
-      try {
-        require.resolve(config[keys[type]][key])
+    const category = config[keys[type]]
+    for(const key in category) {
+      if(checkPath(category[key])) {
         result[keys[type]][key] = {
           type: 'full',
-          path: config[keys[type]][key]
+          path: category[key]
         }
-      } catch(e) {
-        try {
-          require.resolve(config.root.components + '/' +config[keys[type]][key])
-          result[keys[type]][key] = {
-            type: 'full',
-            path: config.root.components + '/' +config[keys[type]][key]
-          }
-        } catch(e) {
-          result[keys[type]][key] = {
-            type: 'inside',
-            path: config.root.components,
-            component: config[keys[type]][key]
-          }
+      } else if(checkPath(config.root.components + '/' +category[key])) {
+        result[keys[type]][key] = {
+          type: 'full',
+          path: config.root.components + '/' +category[key]
+        }
+      } else {
+        result[keys[type]][key] = {
+          type: 'inside',
+          path: config.root.components,
+          component: category[key]
         }
       }
     }
@@ -52,8 +62,7 @@ const convertPath = (config) => {
         }
         continue
       }
-      try {
-        require.resolve(config.store[key].module)
+      if(checkPath(config.store[key].module)) {
         result.store[key] = {
           ...config.store[key],
           module: {
@@ -61,24 +70,21 @@ const convertPath = (config) => {
             path: config.store[key].module
           }
         }
-      } catch(e) {
-        try {
-          require.resolve(config.root.store + '/' + config.store[key].module)
-          result.store[key] = {
-            ...config.store[key],
-            module: {
-              type: 'full',
-              path: config.root.store + '/' + config.store[key].module
-            }
+      } else if (checkPath(config.root.store + '/' + config.store[key].module)) {
+        result.store[key] = {
+          ...config.store[key],
+          module: {
+            type: 'full',
+            path: config.root.store + '/' + config.store[key].module
           }
-        } catch(e) {
-          result.store[key] = {
-            ...config.store[key],
-            module: {
-              type: 'inside',
-              path: config.root.store,
-              component: config.store[key].module
-            }
+        }
+      } else {
+        result.store[key] = {
+          ...config.store[key],
+          module: {
+            type: 'inside',
+            path: config.root.store,
+            component: config.store[key].module
           }
         }
       }
@@ -89,26 +95,23 @@ const convertPath = (config) => {
     result.locales = {}
     for (const key in config.locales) {
       result.locales[key] = []
-      for (const key2 in config.locales[key]) {
-        try {
-          require.resolve(config.locales[key][key2])
+      const locale = config.locales[key]
+      for (const key2 in locale) {
+        if(checkPath(locale[key2])) {
           result.locales[key][key2] = {
             type: 'full',
             path: config.locales[key][key2]
           }
-        } catch(e) {
-          try {
-            require.resolve(config.root.locales + '/' + config.locales[key][key2])
-            result.locales[key][key2] = {
-              type: 'full',
-              path: config.root.locales + '/' + config.locales[key][key2]
-            }
-          } catch(e) {
-            result.locales[key][key2] = {
-              type: 'inside',
-              path: config.root.locales,
-              component: config.locales[key][key2]
-            }
+        } else if (checkPath(config.root.locales + '/' + config.locales[key][key2])) {
+          result.locales[key][key2] = {
+            type: 'full',
+            path: config.root.locales + '/' + config.locales[key][key2]
+          }
+        } else {
+          result.locales[key][key2] = {
+            type: 'inside',
+            path: config.root.locales,
+            component: config.locales[key][key2]
           }
         }
       }
@@ -120,6 +123,8 @@ const convertPath = (config) => {
 
 export default (rootDir) => {
   let themeOptions = require('vuefront').default
+
+  rootPath = rootDir
 
   themeOptions = {...themeOptions, ...convertPath(themeOptions)}
   let config = require(rootDir + '/vuefront.config').default
