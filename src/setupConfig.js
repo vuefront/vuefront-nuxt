@@ -129,6 +129,13 @@ export default (rootDir) => {
   themeOptions = {...themeOptions, ...convertPath(themeOptions)}
   let config = require(rootDir + '/vuefront.config').default
   config = {...config, ...convertPath(config)}
+  if (typeof config.app !== 'undefined') {
+    for(const key in config.app) {
+      let customAppOptions = require(config.app[key]).default
+      customAppOptions = {...customAppOptions, ...convertPath(customAppOptions)}
+      themeOptions = _.mergeWith(themeOptions, customAppOptions, mergeConfig)
+    }
+  }
   if (typeof config.theme !== 'undefined') {
     let customThemeOptions = require(config.theme).default
     customThemeOptions = {...customThemeOptions, ...convertPath(customThemeOptions)}
