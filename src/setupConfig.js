@@ -2,13 +2,17 @@ const _ = require('lodash')
 
 let rootPath = ''
 
-const mergeConfig = (objValue, srcValue) => {
-  if (_.isArray(objValue)) {
-    return objValue.concat(srcValue)
-  } else if (_.isObject(objValue)) {
-    return _.merge(objValue, srcValue)
+const mergeConfig = (objValue, srcValue, index) => {
+  if(index !== 'locales') {
+    if (_.isArray(objValue)) {
+      return objValue.concat(srcValue)
+    } else if (_.isObject(objValue)) {
+      return _.merge(objValue, srcValue)
+    } else {
+      return srcValue
+    }
   } else {
-    return srcValue
+    return _.mergeWith(objValue, srcValue, mergeConfig)
   }
 }
 
@@ -98,21 +102,21 @@ const convertPath = (config) => {
       const locale = config.locales[key]
       for (const key2 in locale) {
         if(checkPath(locale[key2])) {
-          result.locales[key][key2] = {
+          result.locales[key].push({
             type: 'full',
             path: config.locales[key][key2]
-          }
+          })
         } else if (checkPath(config.root.locales + '/' + config.locales[key][key2])) {
-          result.locales[key][key2] = {
+          result.locales[key].push({
             type: 'full',
             path: config.root.locales + '/' + config.locales[key][key2]
-          }
+          })
         } else {
-          result.locales[key][key2] = {
+          result.locales[key].push({
             type: 'inside',
             path: config.root.locales,
             component: config.locales[key][key2]
-          }
+          })
         }
       }
     }
@@ -142,6 +146,7 @@ export default (rootDir) => {
     themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
   }
   themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
+
 
   return themeOptions
 
