@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
+import VueApollo from 'vue-apollo'
 import ApolloClient from "apollo-boost";
 import _ from 'lodash'
 import 'isomorphic-fetch'
@@ -62,8 +63,9 @@ export const init = (ctx, inject) => {
         });
       }
     });
+    Vue.use(VueApollo)
     
-  inject('vfapollo', client)
+    inject('vfapollo', client)
 }
 
 function loadLocaleMessages(options) {
