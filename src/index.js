@@ -2,11 +2,14 @@ import setupRoutes from './setupRoutes'
 import setupConfig from './setupConfig'
 import setupBuild from './setupBuild'
 import setupImages from './setupImages'
+const glob = require('glob-all')
 const path = require('path')
 const _ = require('lodash')
 const ampify = require('./plugins/ampify')
 
 export default async function vuefrontModule(_moduleOptions) {
+  const resolver = (this.nuxt.resolver || this.nuxt)
+
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
 
   const theme = process.env.VUEFRONT_THEME || 'default'
@@ -145,6 +148,53 @@ export default async function vuefrontModule(_moduleOptions) {
   this.nuxt.hook('build:before', () => {
     setupBuild.call(this, moduleOptions, themeOptions);
   })
+
+  const extendWithSassResourcesLoader = matchRegex => resources => (config) => {
+    // Yes, using sass-resources-loader is **intended here**
+    // Despite it's name it can be used for less as well!
+    const sassResourcesLoader = {
+      loader: 'sass-resources-loader', options: { resources }
+    }
+  
+    // Gather all loaders that test against scss or sass files
+    const matchedLoaders = config.module.rules.filter(({ test = '' }) => {
+      return test.toString().match(matchRegex)
+    })
+  
+    // push sass-resources-loader to each of them
+    matchedLoaders.forEach((loader) => {
+      loader.oneOf.forEach(rule => rule.use.push(sassResourcesLoader))
+    })
+  }
+
+  const retrieveStyleArrays = styleResourcesEntries =>
+  styleResourcesEntries.reduce((normalizedObject, [key, value]) => {
+    const wrappedValue = Array.isArray(value) ? value : [value]
+    normalizedObject[key] = wrappedValue.reduce((acc, path) => {
+      const possibleModulePath = resolver.resolveModule(path)
+
+      if (possibleModulePath) {
+        // Path is mapped to module
+        return acc.concat(possibleModulePath)
+      }
+      // Try to resolve alias, if not possible join with srcDir
+      path = resolver.resolveAlias(path)
+      // Try to glob (if it's a glob
+      path = glob.sync(path)
+      // Flatten this (glob could produce an array)
+      return acc.concat(path)
+    }, [])
+    return normalizedObject
+  }, {})
+
+  const styleResourcesEntries = Object.entries({scss: Object.values(themeOptions.cssImport)})
+
+  const {scss} = retrieveStyleArrays(styleResourcesEntries)
+
+  const extendScss = extendWithSassResourcesLoader(/scss/)
+
+  this.extendBuild(extendScss(scss))
+
 
   this.extendBuild((config, { isServer }) => {
     const { rules } = config.module

@@ -1,10 +1,13 @@
 {
     "name": "vuefront-nuxt",
-    "version": "0.3.13",
+    "version": "0.3.15",
     "description": "vuefront-nuxt",
     "repository": {
         "type": "git",
         "url": "https://github.com/vuefront/vuefront-nuxt.git"
+    },
+    "scripts": {
+        "yalc-watch": "nodemon -e vue,js,scss,json -x 'yalc push'"
     },
     "files": [
         "src",
@@ -18,16 +21,19 @@
     "typings": "types/index.d.ts",
     "peerDependencies": {},
     "dependencies": {
-        "@types/node": "^14.0.10",
+        "@types/node": "^14.0.27",
         "apollo-boost": "^0.4.9",
         "cookie-universal": "^2.1.4",
-        "graphql": "^15.0.0",
+        "glob-all": "^3.2.1",
+        "graphql": "^15.3.0",
         "isomorphic-fetch": "^2.2.1",
-        "lodash": "^4.17.15",
+        "lodash": "^4.17.19",
+        "nodemon": "^2.0.4",
+        "sass-resources-loader": "^2.0.3",
         "vue": "^2.6.11",
-        "vue-apollo": "^3.0.3",
         "vue-graphql-loader": "^0.3.3",
-        "vue-i18n": "^8.18.1",
-        "vuefront": "^0.3.10"
-    }
+        "vue-i18n": "^8.20.0",
+        "vuefront": "^0.3.12"
+    },
+    "devDependencies": {}
 }

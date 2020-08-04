@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import VueApollo from 'vue-apollo'
+
 import ApolloClient from "apollo-boost";
 import _ from 'lodash'
 import 'isomorphic-fetch'
@@ -13,7 +13,7 @@ const baseURL = process.browser
 
 export const init = (ctx, inject) => {
   const client = new ApolloClient({
-      uri: baseURL,
+    uri: baseURL,
       headers: {
         accept: 'application/json; charset=UTF-8',
         'content-type': 'application/json; charset=UTF-8'
@@ -63,7 +63,6 @@ export const init = (ctx, inject) => {
         });
       }
     });
-    Vue.use(VueApollo)
     
     inject('vfapollo', client)
 }
