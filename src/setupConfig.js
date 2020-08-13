@@ -11,7 +11,15 @@ const mergeConfig = (objValue, srcValue, index) => {
     } else {
       return srcValue
     }
-  } else {
+  } else if(_.includes(['atoms', 'molecules', 'organisms', 'extensions'], index)) {
+    if (_.isArray(objValue)) {
+      return objValue.concat(srcValue)
+    } else if (_.isObject(objValue)) {
+      return _.merge(objValue, srcValue)
+    } else {
+      return srcValue
+    }
+   } else {
     return _.mergeWith(objValue, srcValue, mergeConfig)
   }
 }
@@ -37,23 +45,44 @@ const convertPath = (config) => {
     result[keys[type]] = {}
     const category = config[keys[type]]
     for(const key in category) {
-      if(checkPath(category[key])) {
-        result[keys[type]][key] = {
-          type: 'full',
-          path: category[key]
-        }
-      } else if(checkPath(config.root.components + '/' +category[key])) {
-        result[keys[type]][key] = {
-          type: 'full',
-          path: config.root.components + '/' +category[key]
-        }
-      } else {
-        result[keys[type]][key] = {
-          type: 'inside',
-          path: config.root.components,
-          component: category[key]
+      let component = typeof category[key] === 'object' ? category[key].component : category[key]
+      let css = typeof category[key] === 'object' && typeof category[key].css !== 'undefined' ? category[key].css : undefined
+
+      let compResult = {}
+
+      if (!_.isUndefined(component)) {
+        if(checkPath(component)) {
+          compResult = {
+            type: 'full',
+            path: component
+          }
+        } else if(checkPath(config.root.components + '/' +component)) {
+          compResult = {
+            type: 'full',
+            path: config.root.components + '/' +component,
+          }
+        } else {
+          compResult = {
+            type: 'inside',
+            path: config.root.components,
+            component,
+          }
         }
       }
+      if (!_.isUndefined(css)) {
+        if(checkPath(css)) {
+          compResult = {
+            ...compResult,
+            css
+          }
+        } else if(checkPath(config.root.components + '/' +css)) {
+          compResult = {
+            ...compResult,
+            css: config.root.components + '/' +css,
+          }
+        }
+      }
+      result[keys[type]][key] = compResult
     }
   }
 
@@ -131,6 +160,7 @@ export default (rootDir) => {
   rootPath = rootDir
 
   themeOptions = {...themeOptions, ...convertPath(themeOptions)}
+
   let config = require(rootDir + '/vuefront.config').default
   config = {...config, ...convertPath(config)}
   if (typeof config.app !== 'undefined') {
@@ -146,7 +176,6 @@ export default (rootDir) => {
     themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
   }
   themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
-
 
   return themeOptions
 

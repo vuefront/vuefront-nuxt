@@ -8,6 +8,10 @@ const renderImport = (component, tag) => {
     result = `import {${component.component} as ${tag}} from '${component.path}';`
   }
 
+  if (component.css) {
+    result += `import "${component.css}"`
+  }
+
   return result
 }
 const getImport = (name, type, config, tag) => {

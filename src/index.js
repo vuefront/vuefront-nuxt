@@ -114,6 +114,21 @@ export default async function vuefrontModule(_moduleOptions) {
     }
   })
 
+  this.addPlugin({
+    fileName: 'vuefrontSeo.js',
+    src: path.resolve(__dirname, './seo.js'),
+    options: {
+      images,
+      theme,
+      debug: this.options.dev,
+      browserBaseURL,
+      baseURL,
+      pages,
+      themeOptions
+    }
+  })
+
+
   this.options.generate.routes = whiteList
 
   this.nuxt.hook('generate:routeCreated', async ({route, path, errors}) => {
@@ -121,7 +136,7 @@ export default async function vuefrontModule(_moduleOptions) {
       for (const key in errors) {
         const regex = /^Error:\s+([^.]+)/gm;
         const m = regex.exec(errors[key].error)
-        if(m.length) {
+        if(!_.isNull(m) &&  m.length) {
           console.error(m[1])
         } else {
           console.error(errors[key].error)
@@ -134,13 +149,13 @@ export default async function vuefrontModule(_moduleOptions) {
     const routesToGenerate = routes.filter(page =>
       whiteList.includes(page.route)
     )
+    
     routes.splice(0, routes.length, ...routesToGenerate)
   })
 
   this.nuxt.hook('generate:page', page => {
     page.html = ampify(page.html, page.route)
   })
-
   this.nuxt.hook('render:route', (url, page, { req, res }) => {
     page.html = ampify(page.html, url)
   })

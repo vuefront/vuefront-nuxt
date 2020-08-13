@@ -19,6 +19,7 @@ export const init = (ctx, inject) => {
         'content-type': 'application/json; charset=UTF-8'
       },
       onError: (error) => {
+        console.log(JSON.stringify(error));
         if (error.graphQLErrors) {
           console.log('ApolloClient graphQLErrors')
           console.log(error.graphQLErrors)
@@ -128,8 +129,16 @@ export default async (ctx, inject) => {
 
   <% for (var key in options.themeOptions.extensions) { %>
   <% if (options.themeOptions.extensions[key].type === 'full') { %>
-  extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].path %>');<% } else { %>
-  extensions.<%= key %> = () => import('<%= options.themeOptions.extensions[key].path %>').then(m => m.<%= options.themeOptions.extensions[key].component %>);<% } %><% } %>
+  extensions.<%= key %> = () => { 
+    <% if (options.themeOptions.extensions[key].css) {%>
+    import('<%= options.themeOptions.extensions[key].css %>')<% }%>
+    return import('<%= options.themeOptions.extensions[key].path %>')
+  };<% } else { %>
+  extensions.<%= key %> = () => {
+    <% if (options.themeOptions.extensions[key].css) {%>
+    import('<%= options.themeOptions.extensions[key].css %>')<% }%>
+    return import('<%= options.themeOptions.extensions[key].path %>').then(m => m.<%= options.themeOptions.extensions[key].component %>)
+}<% } %><% } %>
 
   const images = {}
 
