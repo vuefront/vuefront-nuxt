@@ -2,11 +2,11 @@ import _ from 'lodash'
 const breadcrumbsLoad = (component) => {
   component.serverPrefetch = function() {
     return new Promise(async (resolve) => {
-      this.$store.dispatch('common/breadcrumbs/init');
+      // this.$store.dispatch('common/breadcrumbs/init');
       if(this.handleLoadData) {
         await this.handleLoadData(this)
       }
-      await this.$store.dispatch('common/breadcrumbs/load');
+      // await this.$store.dispatch('common/breadcrumbs/load');
       resolve()
     })
   }

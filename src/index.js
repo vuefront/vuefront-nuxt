@@ -99,6 +99,23 @@ export default async function vuefrontModule(_moduleOptions) {
     src: defaultRouter
   })
 
+  for (const key in themeOptions.plugins) {
+    const pluginPath = _.replace(themeOptions.plugins[key], /^(~)/, this.options.rootDir)
+
+    this.addPlugin({
+      fileName: `vuefront-${key}.js`,
+      src: require.resolve(pluginPath),
+      options: {
+        images,
+        theme,
+        debug: this.options.dev,
+        browserBaseURL,
+        baseURL,
+        pages,
+        themeOptions
+      }
+    })
+  }
 
   this.addPlugin({
     fileName: 'vuefront.js',

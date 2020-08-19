@@ -98,6 +98,6 @@ export default async (baseURL, config) => {
 
   return {
     routes,
-    whiteList
+    whiteList: ['/']
   }
 }

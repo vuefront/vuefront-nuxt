@@ -150,6 +150,8 @@ export default async (ctx, inject) => {
   images.<%= key %>.width = <%= options.images[key].width  %>;
   images.<%= key %>.height = <%= options.images[key].height  %>;<% } %><% } %>
 
+  // inject('t', (name) => (name))
+
   inject('vuefront', {
     layouts: <%= JSON.stringify(options.themeOptions.layouts) %>,
     extensions,
