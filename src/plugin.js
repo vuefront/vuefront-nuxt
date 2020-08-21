@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
-import ApolloClient from "apollo-boost";
+// import ApolloClient from "apollo-boost";
 import _ from 'lodash'
-import 'isomorphic-fetch'
+// import 'isomorphic-fetch'
 
 Vue.use(VueI18n)
 
@@ -11,62 +11,62 @@ const baseURL = process.browser
 ? '<%= options.browserBaseURL %>'
 : '<%= options.baseURL %>'
 
-export const init = (ctx, inject) => {
-  const client = new ApolloClient({
-    uri: baseURL,
-      headers: {
-        accept: 'application/json; charset=UTF-8',
-        'content-type': 'application/json; charset=UTF-8'
-      },
-      onError: (error) => {
-        console.log(JSON.stringify(error));
-        if (error.graphQLErrors) {
-          console.log('ApolloClient graphQLErrors')
-          console.log(error.graphQLErrors)
-        }
-        if (error.networkError) {
-          console.log('ApolloClient networkError')
-          console.log(error.networkError.bodyText)
-        }
-      },
-      request: (operation) => {
-        operation.setContext({
-          fetchOptions: {
-            credentials: 'include'
-          }
-        });
+// export const init = (ctx, inject) => {
+//   const client = new ApolloClient({
+//     uri: baseURL,
+//       headers: {
+//         accept: 'application/json; charset=UTF-8',
+//         'content-type': 'application/json; charset=UTF-8'
+//       },
+//       onError: (error) => {
+//         console.log(JSON.stringify(error));
+//         if (error.graphQLErrors) {
+//           console.log('ApolloClient graphQLErrors')
+//           console.log(error.graphQLErrors)
+//         }
+//         if (error.networkError) {
+//           console.log('ApolloClient networkError')
+//           console.log(error.networkError.bodyText)
+//         }
+//       },
+//       request: (operation) => {
+//         operation.setContext({
+//           fetchOptions: {
+//             credentials: 'include'
+//           }
+//         });
 
-        const headers = {}
-        if (
-          ctx.store.getters['common/customer/token']
-        ) {
-          headers['Authorization'] = `Bearer ${
-            ctx.store.getters['common/customer/token']
-          }`
-        }
+//         const headers = {}
+//         if (
+//           ctx.store.getters['common/customer/token']
+//         ) {
+//           headers['Authorization'] = `Bearer ${
+//             ctx.store.getters['common/customer/token']
+//           }`
+//         }
 
-        headers['Cookie'] = _.map(
-          ctx.app.$cookies.getAll(),
-          (value, index) => {
-            let resValue = value
-            if(typeof value === 'object') {
-              resValue = JSON.stringify(resValue)
-            }
-            if (typeof value === 'array') {
-              resValue = JSON.stringify(resValue)
-            }
-            return index + '=' + resValue
-          }
-        ).join(';')
+//         headers['Cookie'] = _.map(
+//           ctx.app.$cookies.getAll(),
+//           (value, index) => {
+//             let resValue = value
+//             if(typeof value === 'object') {
+//               resValue = JSON.stringify(resValue)
+//             }
+//             if (typeof value === 'array') {
+//               resValue = JSON.stringify(resValue)
+//             }
+//             return index + '=' + resValue
+//           }
+//         ).join(';')
 
-        operation.setContext({
-          headers
-        });
-      }
-    });
+//         operation.setContext({
+//           headers
+//         });
+//       }
+//     });
     
-    inject('vfapollo', client)
-}
+//     inject('vfapollo', client)
+// }
 
 function loadLocaleMessages(options) {
   const locales = require.context(`~/locales`, true, /\.json$/)
@@ -103,7 +103,7 @@ function loadLocaleMessages(options) {
 
 export default async (ctx, inject) => {
 
-  init(ctx, inject)
+  // init(ctx, inject)
 
   const opts = {}
 
