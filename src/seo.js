@@ -5,8 +5,8 @@ export default (ctx) => {
     const matched = ctx.app.router.getMatchedComponents(to)
     if (matched.length === 0) {
       try {
-        const { data } = await ctx.$axios.post(process.env.API_URL,{
-          query: `query($url: String) {
+        const { data } = await ctx.app.$vfapollo.query({
+          query: gql`query($url: String) {
             searchUrl(url: $url) {
               url
               type
@@ -17,7 +17,7 @@ export default (ctx) => {
             url: to.path
           }
         })
-        const { type, id } = data.data.searchUrl
+        const { type, id } = data.searchUrl
         if (type && id) {
           if (type === 'page') {
             ctx.app.router.addRoutes([{

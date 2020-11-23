@@ -57,9 +57,9 @@ export default async function vuefrontModule(_moduleOptions) {
   if(themeOptions.css) {
     for (const key in themeOptions.css) {
       this.options.css.push(themeOptions.css[key])
+      
     }
   }
-
   const images = setupImages(themeOptions)
 
   const {routes, whiteList} = await setupRoutes(baseURL, themeOptions)
