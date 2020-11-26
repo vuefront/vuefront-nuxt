@@ -4,6 +4,10 @@ import VueI18n from 'vue-i18n'
 import ApolloClient from "apollo-boost";
 import _ from 'lodash'
 import 'isomorphic-fetch'
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '~/tailwind.config.js'
+
+const fullConfig = resolveConfig(tailwindConfig)
 
 Vue.use(VueI18n)
 
@@ -158,6 +162,9 @@ export default async (ctx, inject) => {
     baseURL,
     get isAuth() {
       return ctx.store.getters['common/customer/auth']
+    },
+    get tailwindConfig() {
+      return fullConfig
     },
     async logout() {
       await ctx.store.dispatch('common/customer/logout')
