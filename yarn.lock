@@ -857,7 +857,7 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@tailwindcss/custom-forms@tailwindlabs/tailwindcss-custom-forms":
+"@tailwindcss/custom-forms@github:tailwindlabs/tailwindcss-custom-forms":
   version "0.2.1"
   resolved "https://codeload.github.com/tailwindlabs/tailwindcss-custom-forms/tar.gz/13fe3074dd10a63528de0191063806e34ff6b829"
   dependencies:
@@ -3639,9 +3639,10 @@ vue@^2.6.12:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
-vuefront@vuefront/vuefront#tailwind:
-  version "0.3.14"
-  resolved "https://codeload.github.com/vuefront/vuefront/tar.gz/b189305a907caa7d971369e2fc6ba781d783148e"
+vuefront@0.3.15:
+  version "0.3.15"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.15.tgz#39f51412ac49150f17fb458ad2f5c6c7c8892f4b"
+  integrity sha512-IDRKSCSRodMcKM9tUNNg52u8No6z1CF0FPf/io85qErdWZaKEqdxADEwqighLHhcqu0WEIgTfLtnc0Y7PHF0SQ==
   dependencies:
     "@babel/standalone" "^7.12.9"
     "@jamescoyle/vue-icon" "^0.1.0"
