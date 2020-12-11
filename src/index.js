@@ -219,13 +219,15 @@ export default async function vuefrontModule(_moduleOptions) {
     return normalizedObject
   }, {})
 
-  const styleResourcesEntries = Object.entries({scss: Object.values(themeOptions.cssImport)})
+  if (themeOptions.cssImport && !_.isEmpty(themeOptions.cssImport)) {
 
-  const {scss} = retrieveStyleArrays(styleResourcesEntries)
+    const styleResourcesEntries = Object.entries({scss: Object.values(themeOptions.cssImport)})
 
-  const extendScss = extendWithSassResourcesLoader(/scss/)
+    const {scss} = retrieveStyleArrays(styleResourcesEntries)
 
-  this.extendBuild(extendScss(scss))
+    const extendScss = extendWithSassResourcesLoader(/scss/)
+    this.extendBuild(extendScss(scss))
+  }
 
 
   this.extendBuild((config, { isServer }) => {
