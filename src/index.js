@@ -4,10 +4,15 @@ import setupBuild from './setupBuild'
 import setupImages from './setupImages'
 const glob = require('glob-all')
 const path = require('path')
-const _ = require('lodash')
+const ceil = require('lodash/ceil')
+const slice = require('lodash/slice')
+const replace = require('lodash/replace')
+const isNull = require('lodash/isNull')
+const isEmpty = require('lodash/isEmpty')
 const ampify = require('./plugins/ampify')
 
 export default async function vuefrontModule(_moduleOptions) {
+  const isNuxtVersion2 = this.options.build.transpile
   const resolver = (this.nuxt.resolver || this.nuxt)
 
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
@@ -60,18 +65,29 @@ export default async function vuefrontModule(_moduleOptions) {
       
     }
   }
+
+  const items = ['atoms', 'molecules', 'organisms', 'templates', 'extensions']
+
+  for (const item of items) {
+    for (var key in themeOptions[item]) { 
+      if (themeOptions[item][key].css) {
+        this.options.css.push(themeOptions[item][key].css)
+      }
+    } 
+  }
+
   const images = setupImages(themeOptions)
 
   const {routes, whiteList} = await setupRoutes(baseURL, themeOptions)
 
-  const pages = _.ceil(routes.length / 500)
+  const pages = ceil(routes.length / 500)
 
   for (var i = 0; i < pages; i++) {
     this.addPlugin({
       fileName: `vuefront/routes${i + 1}.js`,
       src: path.resolve(__dirname, './routes.js'),
       options: {
-        routes: _.slice(routes, i * 500, i * 500 + 500),
+        routes: slice(routes, i * 500, i * 500 + 500),
         theme,
         themeOptions
       }
@@ -100,7 +116,7 @@ export default async function vuefrontModule(_moduleOptions) {
   })
 
   for (const key in themeOptions.plugins) {
-    const pluginPath = _.replace(themeOptions.plugins[key], /^(~)/, this.options.rootDir)
+    const pluginPath = replace(themeOptions.plugins[key], /^(~)/, this.options.rootDir)
 
     this.addPlugin({
       fileName: `vuefront-${key}.js`,
@@ -153,7 +169,7 @@ export default async function vuefrontModule(_moduleOptions) {
       for (const key in errors) {
         const regex = /^Error:\s+([^.]+)/gm;
         const m = regex.exec(errors[key].error)
-        if(!_.isNull(m) &&  m.length) {
+        if(!isNull(m) &&  m.length) {
           console.error(m[1])
         } else {
           console.error(errors[key].error)
@@ -219,7 +235,7 @@ export default async function vuefrontModule(_moduleOptions) {
     return normalizedObject
   }, {})
 
-  if (themeOptions.cssImport && !_.isEmpty(themeOptions.cssImport)) {
+  if (themeOptions.cssImport && !isEmpty(themeOptions.cssImport)) {
 
     const styleResourcesEntries = Object.entries({scss: Object.values(themeOptions.cssImport)})
 
@@ -257,6 +273,21 @@ export default async function vuefrontModule(_moduleOptions) {
         ]
       }
       rules.push(blockRules)
+    }
+
+    if (isServer) {
+      const apolloModuleRe = /^vue-cli-plugin-apollo/
+
+      // Adding proper way of handling whitelisting with Nuxt 2
+      if (isNuxtVersion2) {
+        this.options.build.transpile.push(apolloModuleRe)
+      } else {
+        config.externals = [
+          nodeExternals({
+            allowlist: [apolloModuleRe]
+          })
+        ]
+      }
     }
   })
 }

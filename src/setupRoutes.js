@@ -1,5 +1,7 @@
 const ApolloClient = require('apollo-boost').default
-const _ = require('lodash')
+const isObject = require('lodash/isObject')
+const isEmpty = require('lodash/isEmpty')
+const isUndefined = require('lodash/isUndefined')
 require('isomorphic-fetch')
 const convertComponent = (component, config) => {
   if (config.pages[component].type === 'full') {
@@ -25,14 +27,14 @@ export default async (baseURL, config) => {
   let routes = []
   for (const url in config.seo) {
     const pageComponent = config.seo[url]
-    if (_.isObject(pageComponent)) {
-      if (!_.isUndefined(pageComponent.generate) && pageComponent.generate) {
+    if (isObject(pageComponent)) {
+      if (!isUndefined(pageComponent.generate) && pageComponent.generate) {
         whiteList = [...whiteList, url,/* '/amp' + url*/]
-      } else if (_.isUndefined(pageComponent.generate) && !url.includes(':')) {
+      } else if (isUndefined(pageComponent.generate) && !url.includes(':')) {
         whiteList = [...whiteList, url, /*'/amp' + url*/]
       }
       let result = []
-      if (!_.isUndefined(pageComponent.seo)) {
+      if (!isUndefined(pageComponent.seo)) {
         let seoResolver = pageComponent.seo
 
         result = await seoResolver({ client })
@@ -47,11 +49,11 @@ export default async (baseURL, config) => {
       //   path: '/amp' + url,
       //   component: convertComponent(pageComponent.component, config)
       // })
-      if (!_.isUndefined(pageComponent.seo) && !_.isEmpty(result)) {
+      if (!isUndefined(pageComponent.seo) && !isEmpty(result)) {
         for (const urlKey in result) {
           if (result[urlKey].url !== '') {
             if (
-              !_.isUndefined(pageComponent.generate) &&
+              !isUndefined(pageComponent.generate) &&
               pageComponent.generate
             ) {
               whiteList = [
@@ -59,7 +61,7 @@ export default async (baseURL, config) => {
                 result[urlKey].url,
                 // '/amp/' + result[urlKey].keyword
               ]
-            } else if (_.isUndefined(pageComponent.generate)) {
+            } else if (isUndefined(pageComponent.generate)) {
               whiteList = [
                 ...whiteList,
                 result[urlKey].url,
@@ -98,6 +100,6 @@ export default async (baseURL, config) => {
 
   return {
     routes,
-    whiteList: ['/']
+    whiteList
   }
 }

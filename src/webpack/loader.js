@@ -40,8 +40,12 @@ function install (install, content, imports) {
   if (imports.length) {
     let newContent = '/* vuefront-loader */\n'
     newContent += `import ${install} from ${stringifyRequest(this, '!' + runtimePaths[install])}\n`
-    newContent += imports.map(i => i[1]).join('\n') + '\n'
-    newContent += `${install}(component, {${imports.map(i => i[0]).join(',')}})\n`
+    // newContent += imports.map(i => i[2]).join('\n') + '\n'
+    let result = []
+    for (const item of imports) {
+      result.push(`${item[0]}: ${item[1]}`)
+    }
+    newContent += `${install}(component, {${result.join(',')}})\n`
 
     // Insert our modification before the HMR code
     const hotReload = content.indexOf('/* hot reload */')

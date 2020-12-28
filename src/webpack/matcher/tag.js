@@ -3,10 +3,15 @@ const renderImport = (component, tag) => {
   let result = ''
 
   if (component.type === 'full') {
-    result = `import ${tag} from '${component.path}';`
+    result = `() =>  import('${component.path}')`
   } else {
-    result = `import {${component.component} as ${tag}} from '${component.path}';`
+    result = `() => import('${component.path}').then(m => (m.${component.component}))`
   }
+
+  return result
+}
+const renderImportCss = (component, tag) => {
+  let result = ''
 
   if (component.css) {
     result += `import "${component.css}"`
@@ -14,7 +19,7 @@ const renderImport = (component, tag) => {
 
   return result
 }
-const getImport = (name, type, config, tag) => {
+const getImport = (name, type, config, tag, renderImport) => {
   let comImport = false
 
   switch (type) {
@@ -67,7 +72,7 @@ module.exports = function match (_, config, { kebabTag, camelTag: tag }) {
   const type = m[1]
   const name = m[2]
 
-  let comImport = getImport(name, type, config, tag)
-
-  return [tag, comImport]
+  let comImport = getImport(name, type, config, tag, renderImport)
+  let comImportCss = getImport(name, type, config, tag, renderImportCss)
+  return [tag, comImport, comImportCss]
 }
