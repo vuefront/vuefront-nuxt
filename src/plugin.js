@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
-// import ApolloClient from "apollo-boost";
-import 'cross-fetch/polyfill'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client/src'
+import ApolloClient from "apollo-boost";
 // import map from 'lodash/map'
 import isUndefined from 'lodash/isUndefined'
 import isEmpty from 'lodash/isEmpty'
@@ -17,38 +15,9 @@ const baseURL = process.browser
 ? '<%= options.browserBaseURL %>'
 : '<%= options.baseURL %>'
 
-const getApolloConfig = ({ req, store, app }) => {
-  const h = {}
-  if (!process.client) {
-    h.cookie =  map(
-      app.$cookies.getAll(),
-      (value, index) => {
-        let resValue = value
-        if(typeof value === 'object') {
-          resValue = JSON.stringify(resValue)
-        }
-        if (typeof value === 'array') {
-          resValue = JSON.stringify(resValue)
-        }
-        return index + '=' + resValue
-      }
-    ).join(';')
-  }
-  return {
-    httpEndpoint: baseURL,
-    httpLinkOptions: {
-      headers: h,
-      credentials: 'include'
-    }
-  }
-}
-
-
 
 export const init = (ctx, inject) => {
-  const apolloConfig  = getApolloConfig(ctx)
-  const client = createApolloClient(apolloConfig)
-    /*{
+  const client = new ApolloClient({
     uri: baseURL,
       headers: {
         accept: 'application/json; charset=UTF-8',
@@ -99,8 +68,8 @@ export const init = (ctx, inject) => {
           headers
         });
       }
-    });*/
-    inject('vfapollo', client.apolloClient)
+    });
+    inject('vfapollo', client)
 }
 
 function loadLocaleMessages(options) {
@@ -144,6 +113,8 @@ export default async (ctx, inject) => {
 
   if(process.client) {
     if(isUndefined(window.__NUXT__)) {
+      opts.preserveState = false
+    } else if(!isUndefined(window.__NUXT__) && isUndefined(window.__NUXT__.serverRendered)) {
       opts.preserveState = false
     }
   }
