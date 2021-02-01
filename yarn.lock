@@ -1378,10 +1378,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.49.tgz#ecf0b67bab4b84d0ec9b0709db4aac3824a51c4a"
   integrity sha512-PGaJNs5IZz5XgzwJvL/1zRfZB7iaJ5BydZ8/Picm+lUNYoNO9iVTQkVy5eUh0dZDrx3rBOIs3GCbCRmMuYyqwg==
 
-"@types/node@^14.14.20":
-  version "14.14.20"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.20.tgz#f7974863edd21d1f8a494a73e8e2b3658615c340"
-  integrity sha512-Y93R97Ouif9JEOWPIUyU+eyIdyRqQR0I8Ez1dzku4hDx34NWh4HbtIc3WNzwB1Y9ULvNGeu5B8h8bVL5cAk4/A==
+"@types/node@^14.14.22":
+  version "14.14.22"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.22.tgz#0d29f382472c4ccf3bd96ff0ce47daf5b7b84b18"
+  integrity sha512-g+f/qj/cNcqKkc3tFqlXOYjrmZA+jNBiDzbP3kH+B+otKFqAdPgVTGP1IeKRdMml/aE69as5S4FqtxAbl+LaMw==
 
 "@types/qs@*":
   version "6.9.5"
@@ -3729,6 +3729,11 @@ graphql@^15.3.0:
   version "15.3.0"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.3.0.tgz#3ad2b0caab0d110e3be4a5a9b2aa281e362b5278"
   integrity sha512-GTCJtzJmkFLWRfFJuoo9RWWa/FfamUHgiFosxi/X1Ani4AVWbeyBenZTNX6dM+7WSbbFfTo/25eh0LLkwHMw2w==
+
+graphql@^15.5.0:
+  version "15.5.0"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.5.0.tgz#39d19494dbe69d1ea719915b578bf920344a69d5"
+  integrity sha512-OmaM7y0kaK31NKG31q4YbD2beNYa6jBBKtMFT6gLYJljHLJr42IqJ8KX08u3Li/0ifzTU5HjmoOOrwa5BRLeDA==
 
 hammerjs@^2.0.8:
   version "2.0.8"
@@ -6234,10 +6239,10 @@ vue-graphql-loader@^0.3.3:
     graphql-tag "^2.4.2"
     loader-utils "^1.1.0"
 
-vue-i18n@^8.22.3:
-  version "8.22.3"
-  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.22.3.tgz#4ac0fdc3e71d4fe188938c40a9ffca32cde60732"
-  integrity sha512-Vhyx7sZEmmW/aZLkzSlXei08Rv3hTondx4J9wbOjnThocTIK1QiXV6QRdT4BTnhT24JixDSf6kGkxqCXSaJ3Jw==
+vue-i18n@^8.22.4:
+  version "8.22.4"
+  resolved "https://registry.yarnpkg.com/vue-i18n/-/vue-i18n-8.22.4.tgz#255cbdab4ffa7337c5819b82dd171208af74e385"
+  integrity sha512-XLI5s0AdqMP2Lf4I4CmdmOq8kjb5DDFGR77wAuxCfpEuYSfhTRyyx6MetgZMiL6Lxa0DasjBOiOcciU3NkL3/Q==
 
 vue-image-lightbox@^7.2.0:
   version "7.2.0"
@@ -6271,10 +6276,10 @@ vue@^2.6.12:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
-vuefront@0.3.24:
-  version "0.3.24"
-  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.24.tgz#cc6eaaf3aa155d7790a423d433b41d48fa0edbc3"
-  integrity sha512-6/b4tib5+iuM3SK7KDosvLaooK8yfvSVldmSM2Q8zqr5E70xgkjI36HwlnGU/AojT4NVWCwo5yuj7yqOw+8P9w==
+vuefront@0.3.25:
+  version "0.3.25"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.25.tgz#28dfd268a2be83f64f672dbf3b6387189b422c58"
+  integrity sha512-IVl+9mA+Ef0cU3CIafnaAn43pQOJpacqDghPMHiyRDbeheGfOcHesEe1DqD0Nxrv1aHK6dRdlYppl/rMBnSSvA==
   dependencies:
     "@babel/standalone" "^7.12.9"
     "@jamescoyle/vue-icon" "^0.1.0"
