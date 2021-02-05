@@ -1378,10 +1378,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.49.tgz#ecf0b67bab4b84d0ec9b0709db4aac3824a51c4a"
   integrity sha512-PGaJNs5IZz5XgzwJvL/1zRfZB7iaJ5BydZ8/Picm+lUNYoNO9iVTQkVy5eUh0dZDrx3rBOIs3GCbCRmMuYyqwg==
 
-"@types/node@^14.14.22":
-  version "14.14.22"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.22.tgz#0d29f382472c4ccf3bd96ff0ce47daf5b7b84b18"
-  integrity sha512-g+f/qj/cNcqKkc3tFqlXOYjrmZA+jNBiDzbP3kH+B+otKFqAdPgVTGP1IeKRdMml/aE69as5S4FqtxAbl+LaMw==
+"@types/node@^14.14.25":
+  version "14.14.25"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.25.tgz#15967a7b577ff81383f9b888aa6705d43fbbae93"
+  integrity sha512-EPpXLOVqDvisVxtlbvzfyqSsFeQxltFbluZNRndIb8tr9KiBnYNLzrc1N3pyKUCww2RNrfHDViqDWWE1LCJQtQ==
 
 "@types/qs@*":
   version "6.9.5"
@@ -6276,10 +6276,10 @@ vue@^2.6.12:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
-vuefront@0.3.25:
-  version "0.3.25"
-  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.25.tgz#28dfd268a2be83f64f672dbf3b6387189b422c58"
-  integrity sha512-IVl+9mA+Ef0cU3CIafnaAn43pQOJpacqDghPMHiyRDbeheGfOcHesEe1DqD0Nxrv1aHK6dRdlYppl/rMBnSSvA==
+vuefront@0.3.26:
+  version "0.3.26"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.26.tgz#bd877ebe153cb854e2e78636e590a8809a031c6b"
+  integrity sha512-q6+vwBOu0wYdkWzRP2sosoTFBpBDesFeV9E0e3kXENcNWLB886ENSVVzJxEzCfgET6w6VDPRYA1+Yv993lT3+w==
   dependencies:
     "@babel/standalone" "^7.12.9"
     "@jamescoyle/vue-icon" "^0.1.0"

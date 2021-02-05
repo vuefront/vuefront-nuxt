@@ -1,6 +1,6 @@
 {
     "name": "vuefront-nuxt",
-    "version": "0.3.30",
+    "version": "0.3.31",
     "description": "vuefront-nuxt",
     "repository": {
         "type": "git",
@@ -21,7 +21,7 @@
     "typings": "types/index.d.ts",
     "peerDependencies": {},
     "dependencies": {
-        "@types/node": "^14.14.22",
+        "@types/node": "^14.14.25",
         "apollo-boost": "^0.4.9",
         "cookie-universal": "^2.1.4",
         "cross-fetch": "^3.0.6",
@@ -35,7 +35,7 @@
         "vue-cli-plugin-apollo": "^0.22.2",
         "vue-graphql-loader": "^0.3.3",
         "vue-i18n": "^8.22.4",
-        "vuefront": "0.3.25"
+        "vuefront": "0.3.26"
     },
     "devDependencies": {}
 }

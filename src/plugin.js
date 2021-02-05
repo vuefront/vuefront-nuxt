@@ -24,7 +24,6 @@ export const init = (ctx, inject) => {
         'content-type': 'application/json; charset=UTF-8'
       },
       onError: (error) => {
-        console.log(JSON.stringify(error));
         if (error.graphQLErrors) {
           console.log('ApolloClient graphQLErrors')
           console.log(error.graphQLErrors)
