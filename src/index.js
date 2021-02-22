@@ -76,6 +76,14 @@ export default async function vuefrontModule(_moduleOptions) {
     } 
   }
 
+  const filesToWatch = [
+    'vuefront.config.js'
+  ]
+
+  this.options.watch.push(
+    ...filesToWatch.map(file => path.resolve(this.options.rootDir, file))
+  )
+
   const images = setupImages(themeOptions)
 
   const {routes, whiteList} = await setupRoutes(baseURL, themeOptions)
