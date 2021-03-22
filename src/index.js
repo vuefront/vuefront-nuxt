@@ -282,20 +282,5 @@ export default async function vuefrontModule(_moduleOptions) {
       }
       rules.push(blockRules)
     }
-
-    if (isServer) {
-      const apolloModuleRe = /^vue-cli-plugin-apollo/
-
-      // Adding proper way of handling whitelisting with Nuxt 2
-      if (isNuxtVersion2) {
-        this.options.build.transpile.push(apolloModuleRe)
-      } else {
-        config.externals = [
-          nodeExternals({
-            allowlist: [apolloModuleRe]
-          })
-        ]
-      }
-    }
   })
 }

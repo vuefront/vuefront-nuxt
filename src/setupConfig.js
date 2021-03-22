@@ -87,40 +87,41 @@ const convertPath = (config) => {
   }
 
   if(config.store) {
-    result.store = []
+    result.store = {}
     for (const key in config.store) {
+      let storeResult = {}
       if(!config.store[key].module) {
-        result.store[key] = {
-          ...config.store[key]
-        }
-        continue
-      }
-      if(checkPath(config.store[key].module)) {
-        result.store[key] = {
-          ...config.store[key],
-          module: {
-            type: 'full',
-            path: config.store[key].module
-          }
-        }
-      } else if (checkPath(config.root.store + '/' + config.store[key].module)) {
-        result.store[key] = {
-          ...config.store[key],
-          module: {
-            type: 'full',
-            path: config.root.store + '/' + config.store[key].module
-          }
-        }
+        storeResult = config.store[key]
       } else {
-        result.store[key] = {
-          ...config.store[key],
-          module: {
-            type: 'inside',
-            path: config.root.store,
-            component: config.store[key].module
-          }
+        if(checkPath(config.store[key].module)) {
+          storeResult = {
+              ...config.store[key],
+              module: {
+                type: 'full',
+                path: config.store[key].module
+              }
+            }
+        } else if (checkPath(config.root.store + '/' + config.store[key].module)) {
+          storeResult = {
+              ...config.store[key],
+              module: {
+                type: 'full',
+                path: config.root.store + '/' + config.store[key].module
+              }
+            }
+        } else {
+          storeResult = {
+              ...config.store[key],
+              module: {
+                type: 'inside',
+                path: config.root.store,
+                component: config.store[key].module
+              }
+            }
         }
       }
+      const storeKey = _.isArray(storeResult.path) ? storeResult.path.map(val => (_.capitalize(val))).join('') : storeResult.path
+      result.store[storeKey] = storeResult
     }
   }
 
@@ -160,7 +161,7 @@ export default (rootDir) => {
   rootPath = rootDir
 
   themeOptions = {...themeOptions, ...convertPath(themeOptions)}
-
+  
   let config = require(rootDir + '/vuefront.config').default
   config = {...config, ...convertPath(config)}
   if (typeof config.app !== 'undefined') {
@@ -170,13 +171,13 @@ export default (rootDir) => {
       themeOptions = _.mergeWith(themeOptions, customAppOptions, mergeConfig)
     }
   }
+
   if (typeof config.theme !== 'undefined') {
     let customThemeOptions = require(config.theme).default
     customThemeOptions = {...customThemeOptions, ...convertPath(customThemeOptions)}
     themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
   }
   themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
-
   return themeOptions
 
 }
