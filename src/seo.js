@@ -20,41 +20,41 @@ export default (ctx) => {
         const { type, id } = data.searchUrl
         if (type && id) {
           if (type === 'page') {
-            ctx.app.router.addRoutes([{
+            ctx.app.router.addRoute({
               name: to.path,
               alias: to.path,
               path: `/page/${id}`
-            }])
+            })
           } else if (type === 'category') {
-            ctx.app.router.addRoutes([{
+            ctx.app.router.addRoute({
               name: to.path,
               alias: to.path,
               path: `/store/category/${id}`
-            }])
+            })
           } else if (type === 'product') {
-            ctx.app.router.addRoutes([{
+            ctx.app.router.addRoute({
               name: to.path,
               alias: to.path,
               path: `/store/product/${id}`
-            }])
+            })
           } else if (type === 'store') {
-            ctx.app.router.addRoutes([{
+            ctx.app.router.addRoute({
               name: to.path,
               alias: to.path,
               path: `/mystore/${id}`
-            }])
+            })
           } else if (type === 'blog-category') {
-            ctx.app.router.addRoutes([{
+            ctx.app.router.addRoute({
               name: to.path,
               alias: to.path,
               path: `/blog/category/${id}`
-            }])
+            })
           } else if (type === 'blog-post') {
-            ctx.app.router.addRoutes([{
+            ctx.app.router.addRoute({
               name: to.path,
               alias: to.path,
               path: `/blog/post/${id}`
-            }])
+            })
           } else {
             next()
           }

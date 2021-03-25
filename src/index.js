@@ -11,8 +11,14 @@ const isNull = require('lodash/isNull')
 const isEmpty = require('lodash/isEmpty')
 const ampify = require('./plugins/ampify')
 
-export default async function vuefrontModule(_moduleOptions) {
-  const isNuxtVersion2 = this.options.build.transpile
+module.exports = async function (_moduleOptions) {
+  if (!this.options.apollo) {
+    this.options.apollo = {}
+  }
+  if (!this.options.apollo.clientConfigs) {
+    this.options.apollo.clientConfigs = {}
+  }
+
   const resolver = (this.nuxt.resolver || this.nuxt)
 
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
@@ -62,7 +68,7 @@ export default async function vuefrontModule(_moduleOptions) {
   if(themeOptions.css) {
     for (const key in themeOptions.css) {
       this.options.css.push(themeOptions.css[key])
-      
+
     }
   }
 
@@ -86,7 +92,7 @@ export default async function vuefrontModule(_moduleOptions) {
 
   const images = setupImages(themeOptions)
 
-  const {routes, whiteList} = await setupRoutes(baseURL, themeOptions)
+  let {routes, whiteList, exclude} = await setupRoutes(themeOptions)
 
   const pages = ceil(routes.length / 500)
 
@@ -101,6 +107,15 @@ export default async function vuefrontModule(_moduleOptions) {
       }
     })
   }
+
+  this.addPlugin({
+    src: path.resolve(__dirname, 'apollo-config.js'),
+    fileName: 'vuefront-apollo-config.js',
+    options: {
+      baseURL,
+      browserBaseURL
+    }
+  })
 
   this.addPlugin({
     src: path.resolve(__dirname, 'router.js'),
@@ -141,6 +156,11 @@ export default async function vuefrontModule(_moduleOptions) {
     })
   }
 
+  this.options.apollo.clientConfigs.vuefront = './vuefront-apollo-config.js' /*{
+    httpEndpoint: baseURL,
+  }*/
+  this.options.apollo.includeNodeModules = true
+
   this.addPlugin({
     fileName: 'vuefront.js',
     src: path.resolve(__dirname, './plugin.js'),
@@ -169,8 +189,8 @@ export default async function vuefrontModule(_moduleOptions) {
     }
   })
 
-
   this.options.generate.routes = whiteList
+  this.options.generate.exclude = exclude
 
   this.nuxt.hook('generate:routeCreated', async ({route, path, errors}) => {
     if(errors.length) {
@@ -190,7 +210,7 @@ export default async function vuefrontModule(_moduleOptions) {
     const routesToGenerate = routes.filter(page =>
       whiteList.includes(page.route)
     )
-    
+
     routes.splice(0, routes.length, ...routesToGenerate)
   })
 
@@ -211,12 +231,12 @@ export default async function vuefrontModule(_moduleOptions) {
     const sassResourcesLoader = {
       loader: 'sass-resources-loader', options: { resources }
     }
-  
+
     // Gather all loaders that test against scss or sass files
     const matchedLoaders = config.module.rules.filter(({ test = '' }) => {
       return test.toString().match(matchRegex)
     })
-  
+
     // push sass-resources-loader to each of them
     matchedLoaders.forEach((loader) => {
       loader.oneOf.forEach(rule => rule.use.push(sassResourcesLoader))
@@ -253,12 +273,10 @@ export default async function vuefrontModule(_moduleOptions) {
     this.extendBuild(extendScss(scss))
   }
 
-
   this.extendBuild((config, { isServer }) => {
     const { rules } = config.module
 
     const hasGqlLoader = rules.some(rule => rule.use === 'graphql-tag/loader')
-
     if (!hasGqlLoader) {
       const gqlRules = {
         test: /\.(graphql|gql)$/,
@@ -283,4 +301,7 @@ export default async function vuefrontModule(_moduleOptions) {
       rules.push(blockRules)
     }
   })
+  await this.addModule('cookie-universal-nuxt')
+  await this.addModule('@nuxtjs/tailwindcss')
+  await this.addModule('@nuxtjs/apollo')
 }
