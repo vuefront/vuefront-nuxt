@@ -1393,7 +1393,7 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@^14.14.35":
+"@types/node@*":
   version "14.14.35"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.35.tgz#42c953a4e2b18ab931f72477e7012172f4ffa313"
   integrity sha512-Lt+wj8NVPx0zUmUwumiVXapmaLUcAk3yPuHCFVXras9k5VT9TdhJqKqGVUQCD60OTMCl0qxJ57OiTL0Mic3Iag==
@@ -1407,6 +1407,11 @@
   version "10.17.55"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.55.tgz#a147f282edec679b894d4694edb5abeb595fecbd"
   integrity sha512-koZJ89uLZufDvToeWO5BrC4CR4OUfHnUz2qoPs/daQH6qq3IN62QFxCTZ+bKaCE0xaoCAJYE4AXre8AbghCrhg==
+
+"@types/node@^14.14.36":
+  version "14.14.36"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.36.tgz#5637905dbb15c30a33a3c65b9ef7c20e3c85ebad"
+  integrity sha512-kjivUwDJfIjngzbhooRnOLhGYz6oRFi+L+EpMjxroDYXwDw9lHrJJ43E+dJ6KAd3V3WxWAJ/qZE9XKYHhjPOFQ==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
@@ -7043,10 +7048,10 @@ vue@^2.6.12:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
-vuefront@0.3.34:
-  version "0.3.34"
-  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.34.tgz#1d9d8c7348a9eee97ce0e8999ecdd667481aa606"
-  integrity sha512-EJ97cI+Q1JGL02LMTbDf0NB+QRgDYo8Mu7ze/kiGhfU3KqBdByybU8mk2RE3avKTxI3k82YacAwqRwk0GkC7lg==
+vuefront@0.3.35:
+  version "0.3.35"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.35.tgz#01367d3dff3d198a0a26c4dd351b0d91607bb33c"
+  integrity sha512-1+XUkZqvPLMC0Y1SVpH6exgzH6wQgUqqIfT2dYOysY+zF6IeFbQYYUJ/tlS+ll0Qe7BRMvPBuTJYHy+t7Iktjg==
   dependencies:
     "@babel/standalone" "^7.13.7"
     "@jamescoyle/vue-icon" "^0.1.0"

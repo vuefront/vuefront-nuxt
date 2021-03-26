@@ -19,6 +19,10 @@ module.exports = async function (_moduleOptions) {
     this.options.apollo.clientConfigs = {}
   }
 
+  if (!this.options.tailwindcss) {
+    this.options.tailwindcss = {}
+  }
+
   const resolver = (this.nuxt.resolver || this.nuxt)
 
   const moduleOptions = { ...this.options.vuefront, ..._moduleOptions }
@@ -61,6 +65,20 @@ module.exports = async function (_moduleOptions) {
   }
 
   const themeOptions = setupConfig(this.options.rootDir)
+
+  this.options.tailwindcss.config = {
+    purge: {
+      content: [
+        "./components/**/*.{vue,js}",
+        "./layouts/**/*.vue",
+        "./pages/**/*.vue",
+        "./plugins/**/*.{js,ts}",
+        "./nuxt.config.{js,ts}",
+        "./node_modules/vuefront/**/*.{js,vue}"
+      ],
+      options: {}
+    }
+  }
 
   if(!this.options.css) {
     this.options.css = []
