@@ -72,6 +72,7 @@ export default async (ctx, inject) => {
   <% } %>
 
   const extensions = {}
+  const templates = {}
 
   <% for (var key in options.themeOptions.extensions) { %>
   <% if (options.themeOptions.extensions[key].type === 'full') { %>
@@ -81,6 +82,15 @@ export default async (ctx, inject) => {
   extensions.<%= key %> = () => {
     return import('<%= options.themeOptions.extensions[key].path %>').then(m => m.<%= options.themeOptions.extensions[key].component %>)
 }<% } %><% } %>
+<% for (var key in options.themeOptions.templates) { %>
+  <% if (key.startsWith('Layout')) {%>
+  <% if (options.themeOptions.templates[key].type === 'full') { %>
+    templates.<%= key %> = () => { 
+    return import('<%= options.themeOptions.templates[key].path %>')
+  };<% } else { %>
+    templates.<%= key %> = () => {
+    return import('<%= options.themeOptions.templates[key].path %>').then(m => m.<%= options.themeOptions.templates[key].component %>)
+}<% } %><% } %><% } %>
 
   const images = {}
 
@@ -95,6 +105,7 @@ export default async (ctx, inject) => {
   inject('vuefront', {
     layouts: <%= JSON.stringify(options.themeOptions.layouts) %>,
     extensions,
+    templates,
     images,
     options: <%= JSON.stringify(options.themeOptions.options) %>,
     baseURL,
