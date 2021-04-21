@@ -11,7 +11,7 @@ const mergeConfig = (objValue, srcValue, index) => {
     } else {
       return srcValue
     }
-  } else if(_.includes(['atoms', 'molecules', 'organisms', 'extensions'], index)) {
+  } else if(_.includes(['atoms', 'layouts', 'molecules', 'organisms', 'extensions'], index)) {
     if (_.isArray(objValue)) {
       return objValue.concat(srcValue)
     } else if (_.isObject(objValue)) {
@@ -178,6 +178,7 @@ export default (rootDir) => {
     themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
   }
   themeOptions = _.mergeWith(themeOptions, config, mergeConfig)
+
   return themeOptions
 
 }

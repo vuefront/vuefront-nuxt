@@ -7,7 +7,7 @@
         "url": "https://github.com/vuefront/vuefront-nuxt.git"
     },
     "scripts": {
-        "yalc-watch": "nodemon -e vue,js,scss,json -x yalc push"
+        "yalc-watch": "nodemon --watch src -e vue,js,scss,json -x yalc push"
     },
     "files": [
         "src",
