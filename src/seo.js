@@ -31,6 +31,12 @@ export default (ctx) => {
               alias: to.path,
               path: `/store/category/${id}`
             })
+          } else if (type === 'manufacturer') {
+            ctx.app.router.addRoute({
+              name: to.path,
+              alias: to.path,
+              path: `/store/manufacturer/${id}`
+            })
           } else if (type === 'product') {
             ctx.app.router.addRoute({
               name: to.path,
