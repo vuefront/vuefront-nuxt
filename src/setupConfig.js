@@ -151,29 +151,42 @@ const convertPath = (config) => {
       }
     }
   }
-  
+
   return result
 }
 
-export default (rootDir) => {
-  let themeOptions = require('vuefront').default
+const cloneConfig = (config) => {
+  return JSON.parse(JSON.stringify(config))
+}
 
+export default (rootDir) => {
+  let themeOptions = {}
+  delete require.cache[require.resolve('vuefront')]
+  const vuefrontConfig = require('vuefront').default
+
+  themeOptions = cloneConfig(vuefrontConfig)
   rootPath = rootDir
 
-  themeOptions = {...themeOptions, ...convertPath(themeOptions)}
-  
-  let config = require(rootDir + '/vuefront.config').default
+  themeOptions = {...themeOptions,...convertPath(vuefrontConfig)}
+  delete require.cache[require.resolve(rootDir + '/vuefront.config')]
+  let themeConfig = require(rootDir + '/vuefront.config').default
+  let config = cloneConfig(themeConfig)
   config = {...config, ...convertPath(config)}
   if (typeof config.app !== 'undefined') {
     for(const key in config.app) {
-      let customAppOptions = require(config.app[key]).default
+      delete require.cache[require.resolve(config.app[key])]
+      let customAppConfig = require(config.app[key]).default
+      
+      let customAppOptions = cloneConfig(customAppConfig)
       customAppOptions = {...customAppOptions, ...convertPath(customAppOptions)}
       themeOptions = _.mergeWith(themeOptions, customAppOptions, mergeConfig)
     }
   }
 
   if (typeof config.theme !== 'undefined') {
-    let customThemeOptions = require(config.theme).default
+    delete require.cache[require.resolve(config.theme)]
+    let customThemeConfig = require(config.theme).default
+    let customThemeOptions = cloneConfig(customThemeConfig)
     customThemeOptions = {...customThemeOptions, ...convertPath(customThemeOptions)}
     themeOptions = _.mergeWith(themeOptions, customThemeOptions, mergeConfig)
   }
