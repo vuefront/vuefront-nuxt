@@ -1,6 +1,6 @@
 {
     "name": "vuefront-nuxt",
-    "version": "0.3.52",
+    "version": "0.3.53",
     "description": "vuefront-nuxt",
     "repository": {
         "type": "git",
@@ -22,18 +22,18 @@
     "peerDependencies": {},
     "dependencies": {
         "@nuxtjs/apollo": "^4.0.1-rc.5",
-        "@nuxtjs/tailwindcss": "4.1.1",
-        "@types/node": "^14.14.37",
+        "@nuxtjs/tailwindcss": "^4.1.2",
+        "@types/node": "^15.0.3",
         "cookie-universal-nuxt": "^2.1.4",
         "glob-all": "^3.2.1",
         "graphql": "^15.5.0",
         "lodash": "^4.17.21",
         "nodemon": "^2.0.7",
-        "postcss": "^8.2.9",
+        "postcss": "^8.2.15",
         "sass-resources-loader": "^2.1.1",
         "vue": "^2.6.12",
         "vue-graphql-loader": "^0.3.3",
-        "vue-i18n": "^8.24.2",
-        "vuefront": "0.3.45"
+        "vue-i18n": "^8.24.4",
+        "vuefront": "0.3.46"
     }
 }
