@@ -7154,15 +7154,15 @@ vue-lazyload@^1.3.2, vue-lazyload@^1.3.3:
   resolved "https://registry.yarnpkg.com/vue-lazyload/-/vue-lazyload-1.3.3.tgz#4df50a271bde9b74c3caf7a228d6e0af50d5682f"
   integrity sha512-uHnq0FTEeNmqnbBC2aRKlmtd9LofMZ6Q3mWvgfLa+i9vhxU8fDK+nGs9c1iVT85axSua/AUnMttIq3xPaU9G3A==
 
-vue@^2.6.14:
+vue@^2.6.12, vue@^2.6.14:
   version "2.6.14"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.14.tgz#e51aa5250250d569a3fbad3a8a5a687d6036e235"
   integrity sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==
 
-vuefront@^0.3.53:
-  version "0.3.53"
-  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.53.tgz#2ac09d96d0b7b8eb601737f2064b5805cec19f1d"
-  integrity sha512-3hbOTmoFypILADlt72vx2PH6nnNIHFKTpi2Fwr7wmoXNFRjRnw+ANTqmA3m7NOEa90+kIb29D0B0LxdM9VpINg==
+vuefront@^0.3.54:
+  version "0.3.54"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.54.tgz#516dc68afc98be6100f122e02be956a84d79c4c6"
+  integrity sha512-V4AQKtGetmq+9XSXFtwuYmK53XIi49J2qL0K308tT6Qy5v2NumtXzbhmQSzF5oOlO0y/YrU/m9TN3+7bLx5FOw==
   dependencies:
     "@babel/standalone" "^7.14.6"
     "@jamescoyle/vue-icon" "^0.1.0"
@@ -7182,7 +7182,7 @@ vuefront@^0.3.53:
     tailwindcss "2.1.4"
     tb-skeleton "^0.3.6"
     traverse "^0.6.6"
-    vue "^2.6.14"
+    vue "^2.6.12"
     vue-image-lightbox "^7.2.0"
     vue-lazy-hydration "^2.0.0-beta.4"
     vue-lazyload "^1.3.3"
