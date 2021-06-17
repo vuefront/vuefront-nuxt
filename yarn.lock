@@ -7159,10 +7159,10 @@ vue@^2.6.12, vue@^2.6.14:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.14.tgz#e51aa5250250d569a3fbad3a8a5a687d6036e235"
   integrity sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==
 
-vuefront@^0.3.55:
-  version "0.3.55"
-  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.55.tgz#c41fe88862ec6159c0d92f95a8c4c274b31ed574"
-  integrity sha512-25ULBjjkOpAWTxks+4MZiIZkGlR04e05GkSQFtZ4vrJnEQgcoBYRm0S/3F7ePx2ZCWKT71Ea/Sx87G6jO9Kg1g==
+vuefront@^0.3.56:
+  version "0.3.56"
+  resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.56.tgz#5f781b00871aea2e413118d347b054f3065ed4e0"
+  integrity sha512-SS/IieaG+0Ewv6xVwO/onRJPlPxe/ZBZB5omsgM3dd6BCzU7c8/lDAPDYwc8YaKWqncWHh44WmbF4Ongy8oc6g==
   dependencies:
     "@babel/standalone" "^7.14.6"
     "@jamescoyle/vue-icon" "^0.1.0"
