@@ -7158,6 +7158,26 @@ vue@^2.6.12, vue@^2.6.14:
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.14.tgz#e51aa5250250d569a3fbad3a8a5a687d6036e235"
   integrity sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==
 
+vuefront-nuxt@^0.3.79:
+  version "0.3.79"
+  resolved "https://registry.yarnpkg.com/vuefront-nuxt/-/vuefront-nuxt-0.3.79.tgz#21e904a3b1107014fc6d96673ba59fa7124bcead"
+  integrity sha512-iLibHpR1ibHN/19e83YoOMFYkoPU+x5zPmcd28petu6FZolZ2BKuol7SAF6EAfS8XUmac6C26vzczc9Jg00B0w==
+  dependencies:
+    "@nuxtjs/apollo" "^4.0.1-rc.5"
+    "@nuxtjs/tailwindcss" "^4.2.1"
+    "@types/node" "^16.6.1"
+    cookie-universal-nuxt "^2.1.5"
+    glob-all "^3.2.1"
+    graphql "^15.5.1"
+    lodash "^4.17.21"
+    nodemon "^2.0.12"
+    postcss "^8.3.5"
+    sass-resources-loader "^2.2.3"
+    vue "^2.6.14"
+    vue-graphql-loader "^0.3.3"
+    vue-i18n "^8.25.0"
+    vuefront "^0.3.76"
+
 vuefront@^0.3.76:
   version "0.3.76"
   resolved "https://registry.yarnpkg.com/vuefront/-/vuefront-0.3.76.tgz#7d378e3f4c6f83a4c3a2ac7ed3a9ae3d0d04e784"
