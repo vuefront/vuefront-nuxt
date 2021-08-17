@@ -1,6 +1,6 @@
 {
     "name": "vuefront-nuxt",
-    "version": "0.3.80",
+    "version": "0.3.81",
     "description": "vuefront-nuxt",
     "repository": {
         "type": "git",
@@ -34,7 +34,7 @@
         "vue": "^2.6.14",
         "vue-graphql-loader": "^0.3.3",
         "vue-i18n": "^8.25.0",
-        "vuefront": "^0.3.76",
+        "vuefront": "^0.3.78",
         "vuefront-nuxt": "^0.3.79"
     }
 }
