@@ -207,6 +207,7 @@ module.exports = async function (_moduleOptions) {
     }
   })
 
+  
   this.options.generate.routes = whiteList
   this.options.generate.exclude = exclude
 
@@ -238,6 +239,15 @@ module.exports = async function (_moduleOptions) {
   this.nuxt.hook('render:route', (url, page, { req, res }) => {
     page.html = ampify(page.html, url)
   })
+  if (!this.options.build) {
+    this.options.build = {}
+  }
+  if (!this.options.build.transpile) {
+    this.options.build.transpile = []
+  }
+  if (this.options.build && this.options.build.transpile) {
+    this.options.build.transpile.push('lodash-es')
+  }
 
   this.nuxt.hook('build:before', () => {
     setupBuild.call(this, moduleOptions, themeOptions);
