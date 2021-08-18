@@ -1,6 +1,6 @@
 {
     "name": "vuefront-nuxt",
-    "version": "0.3.81",
+    "version": "0.3.82",
     "description": "vuefront-nuxt",
     "repository": {
         "type": "git",
@@ -21,9 +21,9 @@
     "typings": "types/index.d.ts",
     "peerDependencies": {},
     "devDependencies": {
-      "vuefront": "^0.3.78",
-      "vue": "^2.6.14",
-      "@types/node": "^16.6.1"
+        "@types/node": "^16.6.1",
+        "vue": "^2.6.14",
+        "vuefront": "^0.3.78"
     },
     "dependencies": {
         "@nuxtjs/apollo": "^4.0.1-rc.5",
